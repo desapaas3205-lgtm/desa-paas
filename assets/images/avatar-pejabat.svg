@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <rect width="200" height="200" fill="#F1F5F9" rx="16"/>
+  <circle cx="100" cy="75" r="35" fill="#047857" opacity="0.85"/>
+  <!-- Songkok / Peci hitam khas dinas resmi -->
+  <path d="M 68 55 Q 100 48, 132 55 L 130 65 Q 100 60, 70 65 Z" fill="#1E293B"/>
+  <!-- Kemeja Dinas Putih / Korpri / Khaki -->
+  <path d="M 45 165 C 45 125, 70 115, 100 115 C 130 115, 155 125, 155 165 Z" fill="#047857"/>
+  <!-- Kerah Kemeja -->
+  <polygon points="100,122 80,140 100,165 120,140" fill="#FFFFFF"/>
+  <polygon points="100,128 92,145 100,165 108,145" fill="#D97706"/>
+</svg>

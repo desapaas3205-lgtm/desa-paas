@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <rect width="200" height="200" fill="#F1F5F9" rx="16"/>
+  <!-- Hijab / Kerudung Khaki/Hijau Tua Formal -->
+  <path d="M 100 40 C 65 40, 55 70, 55 115 C 55 145, 68 175, 100 175 C 132 175, 145 145, 145 115 C 145 70, 135 40, 100 40 Z" fill="#047857"/>
+  <!-- Wajah -->
+  <ellipse cx="100" cy="85" rx="25" ry="30" fill="#FED7AA"/>
+  <!-- Leher & Hijab lipatan -->
+  <path d="M 85 115 Q 100 128, 115 115 L 125 155 Q 100 165, 75 155 Z" fill="#065F46"/>
+  <!-- Baju Dinas Korpri / Khaki -->
+  <path d="M 40 180 C 40 145, 68 135, 100 135 C 132 135, 160 145, 160 180 Z" fill="#047857"/>
+  <polygon points="100,138 92,155 100,175 108,155" fill="#FDE047"/>
+</svg>

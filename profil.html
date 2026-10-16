@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil & Visi Misi - Website Resmi Desa Paas Pameungpeuk Garut</title>
+  <meta name="description" content="Profil lengkap Desa Paas, sejarah asal-usul nama Paas, visi dan misi, kondisi geografis serta demografi di Kecamatan Pameungpeuk, Kabupaten Garut.">
+  <link rel="icon" type="image/png" href="assets/images/logo-desa.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            desa: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+              950: '#022c22'
+            },
+            emas: {
+              400: '#facc15',
+              500: '#eab308',
+              600: '#ca8a04'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script>
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+  <!-- 1. TOP BAR MINIMALIS & RAPI -->
+  <div class="bg-desa-950 text-slate-300 text-xs py-2 px-4 sm:px-8 border-b border-desa-900">
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center gap-2 text-slate-300">
+        <i class="fa-solid fa-landmark text-emas-400"></i>
+        <span class="font-semibold text-white">Desa Paas</span>
+        <span class="text-slate-500">•</span>
+        <span>Kec. Pameungpeuk, Garut</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <div id="officeStatusIndicator">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-950 text-emerald-300 border border-emerald-800">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Pelayanan: 07:30 - 15:30 WIB
+          </span>
+        </div>
+        <a href="https://wa.me/6282123456789" target="_blank" class="text-slate-300 hover:text-emas-400 flex items-center gap-1.5 transition-colors font-medium">
+          <i class="fa-brands fa-whatsapp text-emerald-400"></i>
+          <span class="hidden sm:inline">WhatsApp Pelayanan</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. NAVBAR UTAMA MODERN (TIDAK MENUMPUK & RAPI) -->
+  <header class="sticky top-0 z-40 nav-glass">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between py-3 gap-4">
+        
+        <!-- Brand Logo Lockup (Kompak & Elegan) -->
+        <a href="index.html" class="flex items-center gap-3 group flex-shrink-0">
+          <img src="assets/images/logo-desa.png" alt="Logo Desa Paas Garut" class="h-11 w-auto object-contain transition-transform group-hover:scale-105 drop-shadow-sm">
+          <div class="leading-tight">
+            <span class="block text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">Pemerintah Desa Paas</span>
+            <span class="block text-xs font-semibold text-desa-700">Kec. Pameungpeuk, Kab. Garut</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation with Sleek Dropdowns -->
+        <nav class="hidden lg:flex items-center gap-1 text-sm font-semibold text-slate-700">
+          <a href="index.html" class="px-3.5 py-2 hover:text-desa-700 hover:bg-slate-100 rounded-xl transition-colors">
+            Beranda
+          </a>
+
+          <!-- Dropdown: Tentang Desa -->
+          <div class="nav-dropdown">
+            <button type="button" class="px-3.5 py-2 text-desa-700 bg-desa-50 rounded-xl font-bold flex items-center gap-1.5 transition-colors">
+              <span>Tentang Desa</span>
+              <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+            </button>
+            <div class="nav-dropdown-menu">
+              <a href="profil.html" class="nav-dropdown-item bg-emerald-50 text-emerald-800">
+                <i class="fa-solid fa-circle-info text-desa-600 w-4"></i>
+                <span>Profil & Visi Misi</span>
+              </a>
+              <a href="pemerintahan.html" class="nav-dropdown-item">
+                <i class="fa-solid fa-users text-desa-600 w-4"></i>
+                <span>Struktur Perangkat Desa</span>
+              </a>
+            </div>
+          </div>
+
+          <a href="layanan.html" class="px-3.5 py-2 hover:text-desa-700 hover:bg-slate-100 rounded-xl transition-colors">
+            Layanan Surat
+          </a>
+
+          <!-- Dropdown: Data & Potensi -->
+          <div class="nav-dropdown">
+            <button type="button" class="px-3.5 py-2 hover:text-desa-700 hover:bg-slate-100 rounded-xl flex items-center gap-1.5 transition-colors">
+              <span>Data & Potensi</span>
+              <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+            </button>
+            <div class="nav-dropdown-menu">
+              <a href="statistik.html" class="nav-dropdown-item">
+                <i class="fa-solid fa-chart-pie text-desa-600 w-4"></i>
+                <span>Statistik Kependudukan</span>
+              </a>
+              <a href="potensi.html" class="nav-dropdown-item">
+                <i class="fa-solid fa-seedling text-desa-600 w-4"></i>
+                <span>Potensi Desa & UMKM</span>
+              </a>
+            </div>
+          </div>
+
+          <a href="berita.html" class="px-3.5 py-2 hover:text-desa-700 hover:bg-slate-100 rounded-xl transition-colors">
+            Kabar Desa
+          </a>
+
+          <a href="kontak.html" class="px-3.5 py-2 hover:text-desa-700 hover:bg-slate-100 rounded-xl transition-colors">
+            Kontak
+          </a>
+        </nav>
+
+        <!-- CTA Button, Theme Toggle & Mobile Hamburger Toggle -->
+        <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          
+          <!-- Tombol Beralih Tema Terang / Gelap -->
+          <button type="button" class="theme-toggle-btn p-2 rounded-xl text-slate-600 hover:text-desa-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-amber-400 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-all flex items-center justify-center gap-1.5" title="Ganti Tema (Gelap / Terang)" aria-label="Ganti Tema Terang atau Gelap">
+            <i class="fa-solid fa-moon text-sm dark:hidden"></i>
+            <i class="fa-solid fa-sun text-sm hidden dark:inline text-amber-400"></i>
+            <span class="text-xs font-semibold hidden md:inline theme-toggle-text">Tema</span>
+          </button>
+
+          <a href="layanan.html" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-desa-700 hover:bg-desa-800 shadow-sm hover:shadow transition-all">
+            <i class="fa-solid fa-file-pen text-emas-400"></i> Buat Surat Online
+          </a>
+          <button id="mobileMenuToggle" type="button" class="lg:hidden p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-desa-600" aria-label="Buka Menu">
+            <i class="fa-solid fa-bars text-xl"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Navigation -->
+    <div id="mobileNavMenu" class="hidden lg:hidden border-t border-slate-200 bg-white shadow-xl px-4 py-4 space-y-1 text-sm font-semibold">
+      <a href="index.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-house w-6 text-desa-600"></i> Beranda</a>
+      <a href="profil.html" class="block px-3 py-2.5 rounded-xl text-desa-700 bg-desa-50 font-bold"><i class="fa-solid fa-circle-info w-6 text-desa-600"></i> Profil & Visi Misi</a>
+      <a href="pemerintahan.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-users w-6 text-desa-600"></i> Struktur Perangkat Desa</a>
+      <a href="layanan.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-file-circle-check w-6 text-desa-600"></i> Layanan Surat Mandiri</a>
+      <a href="statistik.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-chart-pie w-6 text-desa-600"></i> Data Kependudukan</a>
+      <a href="potensi.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-seedling w-6 text-desa-600"></i> Potensi Desa & UMKM</a>
+      <a href="berita.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-newspaper w-6 text-desa-600"></i> Kabar & Berita Desa</a>
+      <a href="kontak.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-address-book w-6 text-desa-600"></i> Kontak & Pengaduan</a>
+      <!-- Tema Switcher di Mobile Drawer -->
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between px-3 py-2">
+        <span class="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-2">
+          <i class="fa-solid fa-circle-half-stroke text-desa-600"></i> Tema Tampilan
+        </span>
+        <button type="button" class="theme-toggle-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+          <i class="fa-solid fa-moon dark:hidden text-slate-600"></i>
+          <i class="fa-solid fa-sun hidden dark:inline text-amber-400"></i>
+          <span class="theme-toggle-label">Mode Gelap</span>
+        </button>
+      </div>
+
+      <div class="pt-2">
+        <a href="layanan.html" class="w-full flex items-center justify-center gap-2 px-4 py-3 text-white bg-desa-700 hover:bg-desa-800 rounded-xl font-bold">
+          <i class="fa-solid fa-file-pen text-emas-400"></i> Buat Surat Mandiri Online
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE HEADER WITH BACKGROUND DESA PAAS -->
+  <section class="page-header-bg text-white relative py-14 overflow-hidden">
+    <div class="page-header-overlay absolute inset-0 z-0"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="max-w-3xl">
+        <span class="text-xs font-bold text-emas-300 uppercase tracking-widest bg-white/15 backdrop-blur px-3.5 py-1 rounded-full border border-white/20">Tentang Kami</span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mt-3 text-white">Profil & Sejarah Desa Paas</h1>
+        <p class="text-slate-200 mt-2 text-base sm:text-lg font-light leading-relaxed">Mengenal lebih dekat arah pembangunan, visi misi kepemimpinan, dan asal-usul historis Desa Paas, Kecamatan Pameungpeuk, Kabupaten Garut.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- KONTEN PROFIL DESA -->
+  <main class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+
+    <!-- VISI & MISI DESA PAAS -->
+    <section class="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm">
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <span class="text-xs font-bold text-desa-700 uppercase tracking-widest bg-emerald-100 px-3 py-1 rounded-full">Landasan Pembangunan</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 mt-2">Visi & Misi Desa Paas</h2>
+        <p class="text-slate-500 text-sm mt-1">Pedoman arah kebijakan dan rencana strategis Pemerintah Desa Paas.</p>
+      </div>
+
+      <!-- VISI BOX -->
+      <div class="bg-gradient-to-r from-desa-800 to-desa-700 rounded-2xl p-8 sm:p-10 text-white shadow-lg text-center relative overflow-hidden mb-12">
+        <div class="absolute -right-8 -top-8 w-40 h-40 bg-emas-400/20 rounded-full blur-2xl pointer-events-none"></div>
+        <span class="text-xs font-extrabold text-emas-400 uppercase tracking-widest mb-3 block">VISI PEMERINTAH DESA PAAS</span>
+        <blockquote class="text-xl sm:text-2xl font-bold leading-relaxed max-w-4xl mx-auto font-serif italic text-white">
+          "Terwujudnya Desa Paas yang Mandiri, Sejahtera, Agamis, dan Berkeadaban Melalui Peningkatan Kualitas Pelayanan serta Pemanfaatan Potensi Sumber Daya Desa yang Berkelanjutan."
+        </blockquote>
+      </div>
+
+      <!-- MISI LIST -->
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-desa-600"></i> 6 Misi Pembangunan Desa Paas
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Misi 1 -->
+          <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-desa-500 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center mb-4">1</div>
+            <h4 class="font-bold text-slate-900 mb-2">Tata Kelola Pemerintahan</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Meningkatkan kualitas penyelenggaraan pemerintahan desa yang transparan, akuntabel, partisipatif, serta mengedepankan pelayanan prima kepada masyarakat.</p>
+          </div>
+
+          <!-- Misi 2 -->
+          <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-desa-500 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center mb-4">2</div>
+            <h4 class="font-bold text-slate-900 mb-2">Pemberdayaan Ekonomi Masyarakat</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Mengoptimalkan potensi pertanian, perikanan, perdagangan, dan UMKM melalui penguatan peran BUMDes serta kemitraan usaha demi meningkatkan pendapatan warga.</p>
+          </div>
+
+          <!-- Misi 3 -->
+          <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-desa-500 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center mb-4">3</div>
+            <h4 class="font-bold text-slate-900 mb-2">Pembangunan Infrastruktur</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Menyediakan dan memelihara sarana serta prasarana dasar perdesaan, konektivitas jalan lingkungan, drainase, dan fasilitas umum secara merata dan berkelanjutan.</p>
+          </div>
+
+          <!-- Misi 4 -->
+          <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-desa-500 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center mb-4">4</div>
+            <h4 class="font-bold text-slate-900 mb-2">Kualitas Sumber Daya Manusia</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Mendukung peningkatan mutu pendidikan formal maupun nonformal, derajat kesehatan masyarakat, serta pemenuhan gizi untuk mewujudkan generasi yang sehat dan cerdas.</p>
+          </div>
+
+          <!-- Misi 5 -->
+          <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-desa-500 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center mb-4">5</div>
+            <h4 class="font-bold text-slate-900 mb-2">Nilai Keagamaan & Sosial Budaya</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Menumbuhkembangkan kehidupan beragama, memelihara toleransi, memperkuat semangat gotong royong, serta melestarikan kearifan budaya lokal masyarakat Sunda.</p>
+          </div>
+
+          <!-- Misi 6 -->
+          <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-desa-500 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center mb-4">6</div>
+            <h4 class="font-bold text-slate-900 mb-2">Ketertiban & Kelestarian Lingkungan</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Menciptakan ketenteraman dan ketertiban lingkungan permukiman, serta menjaga kelestarian sumber daya alam dan kebersihan lingkungan hidup.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEJARAH SINGKAT DESA PAAS -->
+    <section class="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm">
+      <div class="max-w-4xl">
+        <span class="text-xs font-bold text-desa-700 uppercase tracking-widest bg-emerald-100 px-3 py-1 rounded-full">Historiografi</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 mt-2 mb-6">Sejarah dan Asal-Usul Desa Paas</h2>
+        
+        <div class="prose max-w-none text-slate-700 space-y-6 text-sm sm:text-base leading-relaxed">
+          <p>
+            Desa Paas merupakan salah satu desa di wilayah Kecamatan Pameungpeuk, Kabupaten Garut, Jawa Barat, yang memiliki perjalanan sejarah erat kaitannya dengan perkembangan wilayah pesisir Garut Selatan.
+          </p>
+
+          <div class="bg-emerald-50/70 border-l-4 border-desa-600 p-6 rounded-r-2xl">
+            <h3 class="text-lg font-bold text-desa-900 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-water text-desa-600"></i> Asal-Usul Nama dan Wilayah
+            </h3>
+            <p class="text-slate-700">
+              Nama <strong>"Paas"</strong> secara turun-temurun diyakini berasal dari dialek dan istilah lokal masyarakat Sunda terdahulu. Pada masa lalu, wilayah ini merupakan perlintasan strategis dan area persinggahan bagi para petani, nelayan, maupun pedagang yang melakukan perjalanan melintasi jalur pesisir dan muara sungai di Garut Selatan.
+            </p>
+            <p class="text-slate-700 mt-2">
+              Istilah <em>"paas"</em> kerap dikaitkan dengan makna tempat melintas, menyeberang, atau perjumpaan jalur aktivitas warga pada masa pembukaan lahan awal.
+            </p>
+          </div>
+
+          <h3 class="text-lg font-bold text-slate-900 mt-6">Dinamika Pemekaran dan Pemerintahan</h3>
+          <ul class="space-y-3 list-disc pl-5">
+            <li>
+              <strong>Masa Awal Pembentukan:</strong> Seiring bertambahnya populasi dan meluasnya permukiman di kawasan Pameungpeuk, Desa Paas berkembang dari sebuah kampung/kedusunan menjadi unit administratif pemerintahan desa definitif guna mempercepat pelayanan publik dan pembangunan wilayah.
+            </li>
+            <li>
+              <strong>Pusat Interaksi Warga:</strong> Karakteristik wilayahnya yang berada di dataran rendah pesisir menjadikan Desa Paas sebagai kawasan pemukiman yang padat dengan mobilitas masyarakat yang dinamis, terhubung langsung dengan sentra aktivitas ekonomi kecamatan Pameungpeuk.
+            </li>
+          </ul>
+
+          <h3 class="text-lg font-bold text-slate-900 mt-6">Perkembangan Sosial dan Budaya</h3>
+          <p>
+            Masyarakat Desa Paas berakar kuat pada nilai-nilai tradisi Sunda yang agamis. Pola kehidupan sosial warga dibentuk oleh budaya gotong royong dan kebersamaan, dengan mata pencaharian tradisional yang berpusat pada pertanian lahan basah, perkebunan rakyat, perdagangan lokal, serta sebagian sektor perikanan/jasa kelautan.
+          </p>
+          <p>
+            Kini, Desa Paas terus berbenah melalui modernisasi infrastruktur pedesaan, penguatan kelembagaan warga, dan optimalisasi potensi lokal untuk mendukung konektivitas ekonomi wilayah Pameungpeuk secara keseluruhan.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GEOGRAFIS & WILAYAH -->
+    <section class="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-6 space-y-4">
+          <span class="text-xs font-bold text-desa-700 uppercase tracking-widest bg-emerald-100 px-3 py-1 rounded-full">Kondisi Wilayah</span>
+          <h2 class="text-3xl font-extrabold text-slate-900">Luas Wilayah & Geografis</h2>
+          <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Berdasarkan data profil wilayah dan data Badan Pusat Statistik (BPS) Kecamatan Pameungpeuk, luas wilayah Desa Paas adalah sekitar <strong>1,95 km² (setara 195 hektare)</strong>.
+          </p>
+          <div class="space-y-3 text-sm">
+            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+              <i class="fa-solid fa-house-chimney text-emerald-600 text-lg"></i>
+              <span>Kawasan Permukiman Padat Penduduk</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+              <i class="fa-solid fa-wheat-awn text-emerald-600 text-lg"></i>
+              <span>Lahan Pertanian Basah & Sawah Teknis</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+              <i class="fa-solid fa-tree text-emerald-600 text-lg"></i>
+              <span>Tegalan & Kebun Rakyat Produktif</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+              <i class="fa-solid fa-building-columns text-emerald-600 text-lg"></i>
+              <span>Sarana Ibadah, Pendidikan, dan Fasilitas Umum</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6">
+          <div class="bg-gradient-to-br from-desa-50 to-emerald-100 p-8 rounded-2xl border border-emerald-200 text-center space-y-4">
+            <div class="w-16 h-16 rounded-2xl bg-desa-700 text-white flex items-center justify-center mx-auto text-2xl shadow">
+              <i class="fa-solid fa-map"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-slate-900">Wilayah Kedusunan Desa Paas</h3>
+            <p class="text-sm text-slate-600">Pelayanan administrasi terbagi dalam 3 wilayah kedusunan:</p>
+            <div class="grid grid-cols-3 gap-3 pt-2">
+              <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center text-center">
+                <div class="w-12 h-12 rounded-full overflow-hidden mb-2 border border-emerald-300 shadow-sm">
+                  <img src="assets/images/perangkat/kadus-1-galih-mukhlis.jpg" alt="Kadus 1 Galih Mukhlis" class="w-full h-full object-cover object-top">
+                </div>
+                <span class="block text-[11px] font-bold text-slate-400">Kedusunan 1</span>
+                <strong class="text-slate-900 text-sm">Dusun 1</strong>
+                <p class="text-xs text-desa-700 mt-0.5 font-medium">Galih Mukhlis</p>
+              </div>
+              <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center text-center">
+                <div class="w-12 h-12 rounded-full overflow-hidden mb-2 border border-emerald-300 shadow-sm">
+                  <img src="assets/images/perangkat/kadus-2-deni-sudian.jpg" alt="Kadus 2 Deni Sudian" class="w-full h-full object-cover object-top">
+                </div>
+                <span class="block text-[11px] font-bold text-slate-400">Kedusunan 2</span>
+                <strong class="text-slate-900 text-sm">Dusun 2</strong>
+                <p class="text-xs text-desa-700 mt-0.5 font-medium">Deni Sudian</p>
+              </div>
+              <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center text-center">
+                <div class="w-12 h-12 rounded-full overflow-hidden mb-2 border border-emerald-300 shadow-sm">
+                  <img src="assets/images/perangkat/kadus-3-sutendi.jpg" alt="Kadus 3 Sutendi" class="w-full h-full object-cover object-top">
+                </div>
+                <span class="block text-[11px] font-bold text-slate-400">Kedusunan 3</span>
+                <strong class="text-slate-900 text-sm">Dusun 3</strong>
+                <p class="text-xs text-desa-700 mt-0.5 font-medium">Sutendi</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAMBANG RESMI & IDENTITAS DESA PAAS -->
+    <section class="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        
+        <!-- Kolom Gambar Logo Resmi -->
+        <div class="lg:col-span-4 flex flex-col items-center justify-center p-8 bg-slate-50 rounded-2xl border border-slate-200/80 text-center">
+          <div class="w-52 h-52 sm:w-60 sm:h-60 flex items-center justify-center p-3 bg-white rounded-2xl shadow-sm border border-slate-100">
+            <img src="assets/images/logo-desa.png" alt="Lambang Resmi Desa Paas Pameungpeuk Garut" class="w-full h-full object-contain filter drop-shadow">
+          </div>
+          <h3 class="font-bold text-slate-900 text-lg mt-4">Lambang Resmi Desa Paas</h3>
+          <p class="text-xs text-desa-700 font-semibold">Kec. Pameungpeuk, Kab. Garut</p>
+          <a href="assets/images/logo-desa.png" download="Logo-Desa-Paas-Garut.png" class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-desa-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors">
+            <i class="fa-solid fa-download"></i> Unduh Logo Resmi (PNG)
+          </a>
+        </div>
+
+        <!-- Kolom Makna Filosofis -->
+        <div class="lg:col-span-8 space-y-6">
+          <div>
+            <span class="text-xs font-bold text-desa-700 uppercase tracking-widest bg-emerald-100 px-3 py-1 rounded-full">Identitas Daerah</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Makna Filosofis Lambang Desa Paas</h2>
+            <p class="text-slate-600 text-sm mt-1 leading-relaxed">
+              Lambang Desa Paas merupakan representasi identitas kedaerahan, nilai luhur kemasyarakatan, serta potensi geospasial kawasan pesisir Garut Selatan.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+              <div class="flex items-center gap-2 font-bold text-sm text-slate-900">
+                <i class="fa-solid fa-star text-amber-500"></i>
+                <span>Bintang Emas di Puncak</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Melambangkan Ketuhanan Yang Maha Esa dan nilai-nilai religius masyarakat Sunda Desa Paas yang agamis, bermoral, dan berkeadaban.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+              <div class="flex items-center gap-2 font-bold text-sm text-slate-900">
+                <i class="fa-solid fa-monument text-amber-600"></i>
+                <span>Tugu Monumen Kebanggaan</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Simbol keteguhan, sejarah kepeloporan, integritas pemerintahan desa, serta pondasi gotong royong warga yang kokoh.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+              <div class="flex items-center gap-2 font-bold text-sm text-slate-900">
+                <i class="fa-solid fa-mountain text-blue-600"></i>
+                <span>Gunung Garut & Alam Hijau</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Menggambarkan topografi pegunungan Garut Selatan dan kesuburan tanah persawahan serta perkebunan rakyat Desa Paas.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+              <div class="flex items-center gap-2 font-bold text-sm text-slate-900">
+                <i class="fa-solid fa-water text-cyan-600"></i>
+                <span>Gelombang Aliran Air / Muara</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Menandakan potensi maritim pesisir Pameungpeuk, muara sungai, dan sektor perikanan yang menopang kehidupan warga.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+              <div class="flex items-center gap-2 font-bold text-sm text-slate-900">
+                <i class="fa-solid fa-wheat-awn text-emerald-600"></i>
+                <span>Untaian Padi & Bunga Kapas</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Simbol kesejahteraan pangan dan sandang, lambang kemakmuran, serta keadilan sosial bagi seluruh masyarakat desa.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+              <div class="flex items-center gap-2 font-bold text-sm text-slate-900">
+                <i class="fa-solid fa-ribbon text-red-600"></i>
+                <span>Pita Pengikat "DESA PAAS"</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Mencerminkan ikatan persatuan, kerukunan antarwarga di 3 dusun, serta kesiapan melangkah menuju desa yang mandiri dan berbudaya.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-300 pt-12 pb-8 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+      <p>&copy; 2026 Pemerintah Desa Paas, Pameungpeuk - Garut. All rights reserved.</p>
+      <div class="flex gap-4">
+        <a href="index.html" class="hover:text-white">Beranda</a>
+        <a href="layanan.html" class="hover:text-white">Layanan Surat</a>
+        <a href="kontak.html" class="hover:text-white">Kontak</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kontak & Pengaduan Warga - Desa Paas Pameungpeuk Garut</title>
+  <meta name="description" content="Saluran komunikasi, alamat kantor desa, nomor WhatsApp pelayanan, dan formulir pengaduan aspirasi masyarakat Desa Paas, Pameungpeuk, Garut.">
+  <link rel="icon" type="image/png" href="assets/images/logo-desa.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            desa: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+              950: '#022c22'
+            },
+            emas: {
+              400: '#facc15',
+              500: '#eab308',
+              600: '#ca8a04'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script>
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+  <!-- 1. TOP BAR MINIMALIS & RAPI -->
+  <div class="bg-desa-950 text-slate-300 text-xs py-2 px-4 sm:px-8 border-b border-desa-900">
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center gap-2 text-slate-300">
+        <i class="fa-solid fa-landmark text-emas-400"></i>
+        <span class="font-semibold text-white">Desa Paas</span>
+        <span class="text-slate-500">•</span>
+        <span>Kec. Pameungpeuk, Garut</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <div id="officeStatusIndicator">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-950 text-emerald-300 border border-emerald-800">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Pelayanan: 07:30 - 15:30 WIB
+          </span>
+        </div>
+        <a href="https://wa.me/6282123456789" target="_blank" class="text-slate-300 hover:text-emas-400 flex items-center gap-1.5 transition-colors font-medium">
+          <i class="fa-brands fa-whatsapp text-emerald-400"></i>
+          <span class="hidden sm:inline">WhatsApp Pelayanan</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. NAVBAR UTAMA MODERN (TIDAK MENUMPUK & RAPI) -->
+  <header class="sticky top-0 z-40 nav-glass">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between py-3 gap-4">
+        
+        <!-- Brand Logo Lockup (Kompak & Elegan) -->
+        <a href="index.html" class="flex items-center gap-3 group flex-shrink-0">
+          <img src="assets/images/logo-desa.png" alt="Logo Desa Paas Garut" class="h-11 w-auto object-contain transition-transform group-hover:scale-105 drop-shadow-sm">
+          <div class="leading-tight">
+            <span class="block text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">Pemerintah Desa Paas</span>
+            <span class="block text-xs font-semibold text-desa-700">Kec. Pameungpeuk, Kab. Garut</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation with Sleek Dropdowns -->
+        <nav class="hidden lg:flex items-center gap-1 text-sm font-semibold text-slate-700">
+          <a href="index.html" class="px-3.5 py-2 hover:text-desa-700 hover:bg-slate-100 rounded-xl transition-colors">
+            Beranda
+          </a>
+
+          <!-- Dropdown: Tentang Desa -->
+          <div class="nav-dropdown">
+            <button type="button" class="px-3.5 py-2 hover:text-desa-700 hover:bg-slate-100 rounded-xl flex items-center gap-1.5 transition-colors">
+              <span>Tentang Desa</span>
+              <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+            </button>
+            <div class="nav-dropdown-menu">
+              <a href="profil.html" class="nav-dropdown-item">
+                <i class="fa-solid fa-circle-info text-desa-600 w-4"></i>
+                <span>Profil & Visi Misi</span>
+              </a>
+              <a href="pemerintahan.html" class="nav-dropdown-item">
+                <i class="fa-solid fa-users text-desa-600 w-4"></i>
+                <span>Struktur Perangkat Desa</span>
+              </a>
+            </div>
+          </div>
+
+          <a href="layanan.html" class="px-3.5 py-2 hover:text-desa-700 hover:bg-slate-100 rounded-xl transition-colors">
+            Layanan Surat
+          </a>
+
+          <!-- Dropdown: Data & Potensi -->
+          <div class="nav-dropdown">
+            <button type="button" class="px-3.5 py-2 hover:text-desa-700 hover:bg-slate-100 rounded-xl flex items-center gap-1.5 transition-colors">
+              <span>Data & Potensi</span>
+              <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+            </button>
+            <div class="nav-dropdown-menu">
+              <a href="statistik.html" class="nav-dropdown-item">
+                <i class="fa-solid fa-chart-pie text-desa-600 w-4"></i>
+                <span>Statistik Kependudukan</span>
+              </a>
+              <a href="potensi.html" class="nav-dropdown-item">
+                <i class="fa-solid fa-seedling text-desa-600 w-4"></i>
+                <span>Potensi Desa & UMKM</span>
+              </a>
+            </div>
+          </div>
+
+          <a href="berita.html" class="px-3.5 py-2 hover:text-desa-700 hover:bg-slate-100 rounded-xl transition-colors">
+            Kabar Desa
+          </a>
+
+          <a href="kontak.html" class="px-3.5 py-2 text-desa-700 bg-desa-50 rounded-xl font-bold">
+            Kontak
+          </a>
+        </nav>
+
+        <!-- CTA Button, Theme Toggle & Mobile Hamburger Toggle -->
+        <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          
+          <!-- Tombol Beralih Tema Terang / Gelap -->
+          <button type="button" class="theme-toggle-btn p-2 rounded-xl text-slate-600 hover:text-desa-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-amber-400 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-all flex items-center justify-center gap-1.5" title="Ganti Tema (Gelap / Terang)" aria-label="Ganti Tema Terang atau Gelap">
+            <i class="fa-solid fa-moon text-sm dark:hidden"></i>
+            <i class="fa-solid fa-sun text-sm hidden dark:inline text-amber-400"></i>
+            <span class="text-xs font-semibold hidden md:inline theme-toggle-text">Tema</span>
+          </button>
+
+          <a href="layanan.html" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-desa-700 hover:bg-desa-800 shadow-sm hover:shadow transition-all">
+            <i class="fa-solid fa-file-pen text-emas-400"></i> Buat Surat Online
+          </a>
+          <button id="mobileMenuToggle" type="button" class="lg:hidden p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-desa-600" aria-label="Buka Menu">
+            <i class="fa-solid fa-bars text-xl"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Navigation -->
+    <div id="mobileNavMenu" class="hidden lg:hidden border-t border-slate-200 bg-white shadow-xl px-4 py-4 space-y-1 text-sm font-semibold">
+      <a href="index.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-house w-6 text-desa-600"></i> Beranda</a>
+      <a href="profil.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-circle-info w-6 text-desa-600"></i> Profil & Visi Misi</a>
+      <a href="pemerintahan.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-users w-6 text-desa-600"></i> Struktur Perangkat Desa</a>
+      <a href="layanan.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-file-circle-check w-6 text-desa-600"></i> Layanan Surat Mandiri</a>
+      <a href="statistik.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-chart-pie w-6 text-desa-600"></i> Data Kependudukan</a>
+      <a href="potensi.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-seedling w-6 text-desa-600"></i> Potensi Desa & UMKM</a>
+      <a href="berita.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-newspaper w-6 text-desa-600"></i> Kabar & Berita Desa</a>
+      <a href="kontak.html" class="block px-3 py-2.5 rounded-xl text-desa-700 bg-desa-50 font-bold"><i class="fa-solid fa-address-book w-6 text-desa-600"></i> Kontak & Pengaduan</a>
+      <!-- Tema Switcher di Mobile Drawer -->
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between px-3 py-2">
+        <span class="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-2">
+          <i class="fa-solid fa-circle-half-stroke text-desa-600"></i> Tema Tampilan
+        </span>
+        <button type="button" class="theme-toggle-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+          <i class="fa-solid fa-moon dark:hidden text-slate-600"></i>
+          <i class="fa-solid fa-sun hidden dark:inline text-amber-400"></i>
+          <span class="theme-toggle-label">Mode Gelap</span>
+        </button>
+      </div>
+
+      <div class="pt-2">
+        <a href="layanan.html" class="w-full flex items-center justify-center gap-2 px-4 py-3 text-white bg-desa-700 hover:bg-desa-800 rounded-xl font-bold">
+          <i class="fa-solid fa-file-pen text-emas-400"></i> Buat Surat Mandiri Online
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE HEADER WITH BACKGROUND DESA PAAS -->
+  <section class="page-header-bg text-white relative py-14 overflow-hidden">
+    <div class="page-header-overlay absolute inset-0 z-0"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="max-w-3xl">
+        <span class="text-xs font-bold text-emas-300 uppercase tracking-widest bg-white/15 backdrop-blur px-3.5 py-1 rounded-full border border-white/20">Layanan Aspirasi</span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mt-3 text-white">Kontak & Saluran Pengaduan Warga</h1>
+        <p class="text-slate-200 mt-2 text-base sm:text-lg font-light leading-relaxed">
+          Sampaikan saran, laporan, atau pertanyaan Anda langsung kepada Pemerintah Desa Paas. Kami siap mendengar dan melayani warga dengan sepenuh hati.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- KONTEN UTAMA KONTAK -->
+  <main class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- FORM PENGADUAN WARGA -->
+      <div class="lg:col-span-7 bg-white rounded-3xl p-8 sm:p-10 border border-slate-200 shadow-sm">
+        <div class="mb-6 pb-6 border-b border-slate-100">
+          <span class="text-xs font-bold text-desa-700 uppercase tracking-widest bg-emerald-100 px-3 py-1 rounded-full">Suara Warga</span>
+          <h3 class="text-2xl font-extrabold text-slate-900 mt-2">Formulir Aspirasi & Pengaduan</h3>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Laporan Anda akan langsung diteruskan ke WhatsApp resmi aparatur Desa Paas.</p>
+        </div>
+
+        <form id="formAduanWarga" class="space-y-4">
+          <div>
+            <label for="aduanNama" class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Lengkap *</label>
+            <input type="text" id="aduanNama" required placeholder="Nama Anda" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-desa-600 text-sm">
+          </div>
+
+          <div>
+            <label for="aduanKontak" class="block text-xs font-bold text-slate-700 uppercase mb-1">Nomor WhatsApp / HP</label>
+            <input type="tel" id="aduanKontak" placeholder="08xxxxxxxxxx" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-desa-600 text-sm">
+          </div>
+
+          <div>
+            <label for="aduanKategori" class="block text-xs font-bold text-slate-700 uppercase mb-1">Kategori Pengaduan / Usulan</label>
+            <select id="aduanKategori" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-desa-600 text-sm bg-white font-medium">
+              <option value="Infrastruktur & Jalan Lingkungan">Infrastruktur & Jalan / Drainase Lingkungan</option>
+              <option value="Pelayanan Administrasi & Surat">Pelayanan Administrasi & Surat Menyurat</option>
+              <option value="Bantuan Sosial & Kesejahteraan">Bantuan Sosial (BLT / PKH / Beras)</option>
+              <option value="Kebersihan & Lingkungan Hidup">Kebersihan & Ketertiban Lingkungan</option>
+              <option value="Usulan Pembangunan / Musdes">Usulan Pembangunan / Ide Baru Desa</option>
+              <option value="Lainnya">Lain-lain</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="aduanPesan" class="block text-xs font-bold text-slate-700 uppercase mb-1">Isi Pesan / Aspirasi / Laporan *</label>
+            <textarea id="aduanPesan" rows="4" required placeholder="Tuliskan secara jelas pokok masalah, lokasi kejadian (misal RT/RW atau Dusun), atau usulan yang ingin Anda sampaikan..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-desa-600 text-sm"></textarea>
+          </div>
+
+          <div class="pt-4">
+            <button type="submit" class="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-bold text-white text-base shadow-lg shadow-emerald-600/20 transition-all">
+              <i class="fa-brands fa-whatsapp text-xl"></i> Kirim Aspirasi via WhatsApp Resmi
+            </button>
+            <p class="text-center text-xs text-slate-400 mt-2">
+              <i class="fa-solid fa-shield-halved text-emerald-600"></i> Identitas pelapor dilindungi kerahasiaannya oleh Pemerintah Desa Paas.
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <!-- INFORMASI DETAIL KONTAK & KANTOR -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm space-y-6">
+          <h3 class="text-xl font-bold text-slate-900 border-b border-slate-100 pb-4">
+            Sekretariat Desa Paas
+          </h3>
+
+          <div class="space-y-4 text-sm text-slate-600">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i class="fa-solid fa-map-location-dot"></i>
+              </div>
+              <div>
+                <strong class="block text-slate-900">Alamat Lengkap:</strong>
+                <span>Kantor Pemerintah Desa Paas, Kecamatan Pameungpeuk, Kabupaten Garut, Provinsi Jawa Barat, Kode Pos 44175</span>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+              </div>
+              <div>
+                <strong class="block text-slate-900">Hotline Pelayanan WhatsApp:</strong>
+                <a href="https://wa.me/6282123456789" target="_blank" class="text-emerald-700 font-bold hover:underline">0821-2345-6789</a>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i class="fa-regular fa-envelope"></i>
+              </div>
+              <div>
+                <strong class="block text-slate-900">Email Resmi:</strong>
+                <span>pemdespaas.garut@gmail.com</span>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i class="fa-solid fa-calendar-day"></i>
+              </div>
+              <div>
+                <strong class="block text-slate-900">Jam Pelayanan Kantor:</strong>
+                <span>Senin - Jumat: 07:30 - 15:30 WIB</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PETA GOOGLE MAPS -->
+        <div class="rounded-3xl overflow-hidden shadow-sm border border-slate-200 h-64 bg-slate-100">
+          <iframe 
+            title="Peta Lokasi Desa Paas Pameungpeuk" 
+            src="https://maps.google.com/maps?q=Paas%2C+Pameungpeuk%2C+Garut+Regency%2C+West+Java&t=&z=14&ie=UTF8&iwloc=&output=embed" 
+            width="100%" 
+            height="100%" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-300 pt-12 pb-8 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+      <p>&copy; 2026 Pemerintah Desa Paas, Pameungpeuk - Garut. All rights reserved.</p>
+      <div class="flex gap-4">
+        <a href="index.html" class="hover:text-white">Beranda</a>
+        <a href="layanan.html" class="hover:text-white">Layanan Surat</a>
+        <a href="kontak.html" class="hover:text-white">Kontak</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

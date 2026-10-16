@@ -1,0 +1,11 @@
+{
+  "name": "website-desa-paas",
+  "version": "1.0.0",
+  "description": "Website Resmi Pemerintah Desa Paas, Kecamatan Pameungpeuk, Kabupaten Garut",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": ["desa", "desa-paas", "garut", "pameungpeuk", "website-desa"],
+  "author": "Pemerintah Desa Paas",
+  "license": "MIT"
+}
