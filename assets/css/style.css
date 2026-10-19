@@ -351,6 +351,61 @@ html.dark .text-slate-500 {
   color: #64748b !important;
 }
 
+/* Dark Mode Brand Typography Overrides */
+html.dark .text-desa-900,
+html.dark .text-desa-800,
+html.dark .text-emerald-900,
+html.dark .text-emerald-800 {
+  color: #6ee7b7 !important;
+}
+
+html.dark .text-desa-700,
+html.dark .text-emerald-700 {
+  color: #34d399 !important;
+}
+
+/* Dark Mode Global Tint Containers, Callouts & Badges */
+html.dark .bg-emerald-50,
+html.dark .bg-desa-50,
+html.dark [class*="bg-emerald-50"],
+html.dark [class*="bg-desa-50"] {
+  background-color: rgba(6, 78, 59, 0.35) !important;
+}
+
+html.dark .bg-emerald-100,
+html.dark .bg-desa-100,
+html.dark [class*="bg-emerald-100"],
+html.dark [class*="bg-desa-100"] {
+  background-color: rgba(6, 95, 70, 0.45) !important;
+  color: #6ee7b7 !important;
+}
+
+html.dark .bg-blue-50,
+html.dark [class*="bg-blue-50"] {
+  background-color: rgba(30, 58, 138, 0.35) !important;
+}
+
+html.dark .bg-blue-100,
+html.dark [class*="bg-blue-100"] {
+  background-color: rgba(30, 64, 175, 0.45) !important;
+  color: #93c5fd !important;
+}
+
+html.dark .bg-amber-50,
+html.dark [class*="bg-amber-50"],
+html.dark .bg-yellow-50,
+html.dark [class*="bg-yellow-50"] {
+  background-color: rgba(120, 53, 15, 0.35) !important;
+}
+
+html.dark .bg-amber-100,
+html.dark [class*="bg-amber-100"],
+html.dark .bg-yellow-100,
+html.dark [class*="bg-yellow-100"] {
+  background-color: rgba(146, 64, 14, 0.45) !important;
+  color: #fde047 !important;
+}
+
 /* Dark Mode Form Inputs */
 html.dark input,
 html.dark select,
