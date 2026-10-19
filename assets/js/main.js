@@ -9,6 +9,7 @@ const DESA_CONFIG = {
   kabupaten: "Garut",
   provinsi: "Jawa Barat",
   kodepos: "44175",
+  alamatKantor: "Jalan Raya Pemeungpeuk No.277 Desa Paas Kec. Pameungpeuk Kab. Garut",
   whatsappAdmin: "6282123456789", // Ganti dengan nomor WA Pelayanan Desa Paas resmi
   emailDesa: "pemdespaas.garut@gmail.com",
   jamBuka: { buka: 7.5, tutup: 15.5 }, // 07:30 - 15:30 WIB
