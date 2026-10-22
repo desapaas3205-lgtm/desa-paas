@@ -503,7 +503,7 @@
           const canvas = document.createElement('canvas');
           let width = img.width;
           let height = img.height;
-          const maxDim = 1200;
+          const maxDim = 800;
           if (width > maxDim || height > maxDim) {
             if (width > height) {
               height = Math.round((height * maxDim) / width);
@@ -517,7 +517,7 @@
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
-          tempBase64Foto = canvas.toDataURL('image/jpeg', 0.82);
+          tempBase64Foto = canvas.toDataURL('image/jpeg', 0.70);
 
           // Tampilkan preview
           document.getElementById('previewImg').src = tempBase64Foto;
@@ -547,39 +547,51 @@
     // Submit Berita Baru
     function handleTambahBeritaSubmit(e) {
       e.preventDefault();
-      const judul = document.getElementById('beritaJudul').value.trim();
-      const kategori = document.getElementById('beritaKategori').value;
-      const penulis = document.getElementById('beritaPenulis').value.trim();
-      const tanggal = document.getElementById('beritaTanggal').value.trim();
-      const ringkasan = document.getElementById('beritaRingkasan').value.trim();
-      const isi = document.getElementById('beritaIsi').value.trim();
+      try {
+        const judul = document.getElementById('beritaJudul').value.trim();
+        const kategori = document.getElementById('beritaKategori').value;
+        const penulis = document.getElementById('beritaPenulis').value.trim();
+        const tanggal = document.getElementById('beritaTanggal').value.trim();
+        const ringkasan = document.getElementById('beritaRingkasan').value.trim();
+        const isi = document.getElementById('beritaIsi').value.trim();
 
-      if (!judul || !isi) {
-        alert("Mohon lengkapi judul dan isi berita.");
-        return;
+        if (!judul || !isi) {
+          alert("Mohon lengkapi judul dan isi berita.");
+          return;
+        }
+
+        const itemBaru = simpanBeritaBaru({
+          judul,
+          kategori,
+          penulis: penulis || 'Pemerintah Desa Paas',
+          tanggal: tanggal || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+          ringkasan: ringkasan || (isi.substring(0, 140) + '...'),
+          isi,
+          gambar: tempBase64Foto
+        });
+
+        if (!itemBaru) {
+          alert("Gagal menyimpan berita. Silakan coba kembali.");
+          return;
+        }
+
+        newlyPublishedBerita = itemBaru;
+
+        // Reset form
+        document.getElementById('formTambahBerita').reset();
+        resetFormBerita();
+
+        // Buka modal sukses & share
+        document.getElementById('modalSuksesJudul').textContent = itemBaru.judul;
+        document.getElementById('modalSuksesTerbit').classList.remove('hidden');
+
+        // Refresh daftar berita di operator seketika
+        renderListBerita();
+        updateDashboardStats();
+      } catch (err) {
+        console.error("Kesalahan saat menerbitkan berita:", err);
+        alert("Terjadi kendala saat menerbitkan berita: " + err.message);
       }
-
-      const itemBaru = simpanBeritaBaru({
-        judul,
-        kategori,
-        penulis: penulis || 'Pemerintah Desa Paas',
-        tanggal: tanggal || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-        ringkasan: ringkasan || (isi.substring(0, 140) + '...'),
-        isi,
-        gambar: tempBase64Foto
-      });
-
-      newlyPublishedBerita = itemBaru;
-
-      // Reset form
-      document.getElementById('formTambahBerita').reset();
-      resetFormBerita();
-
-      // Buka modal sukses & share
-      document.getElementById('modalSuksesJudul').textContent = itemBaru.judul;
-      document.getElementById('modalSuksesTerbit').classList.remove('hidden');
-
-      updateDashboardStats();
     }
 
     function tutupModalSukses() {
@@ -617,9 +629,15 @@
 
       if (list.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-12 text-slate-500">
-            <i class="fa-solid fa-newspaper text-3xl mb-2"></i>
-            <p class="text-sm">Belum ada berita yang diterbitkan.</p>
+          <div class="text-center py-12 text-slate-400">
+            <div class="w-14 h-14 rounded-2xl bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-3 text-2xl border border-slate-700">
+              <i class="fa-solid fa-newspaper"></i>
+            </div>
+            <p class="text-sm font-semibold text-white">Belum ada berita yang diterbitkan.</p>
+            <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Contoh berita lama telah dibersihkan. Klik tombol di bawah untuk mempublikasikan artikel pertama.</p>
+            <button onclick="switchTab('form')" class="mt-4 px-4 py-2 rounded-xl bg-desa-600 hover:bg-desa-500 text-white text-xs font-bold transition-colors">
+              <i class="fa-solid fa-plus mr-1"></i> Tulis Berita Sekarang
+            </button>
           </div>
         `;
         return;

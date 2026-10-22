@@ -225,118 +225,25 @@
   <main class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
 
     <!-- ARTIKEL UTAMA (FEATURED) -->
-    <div id="beritaFeaturedContainer" class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden p-8 sm:p-10">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div class="lg:col-span-7 space-y-4">
-          <div class="flex items-center gap-2">
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Bantuan Sosial</span>
-            <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> 12 Oktober 2026</span>
-          </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight hover:text-desa-700 cursor-pointer" onclick="bukaModalBerita(1)">
-            Penyaluran BLT Dana Desa (BLT-DD) Bagi Keluarga Penerima Manfaat di Desa Paas
-          </h2>
-          <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Pemerintah Desa Paas kembali menyalurkan Bantuan Langsung Tunai Dana Desa (BLT-DD) secara tertib dan transparan kepada KPM di Aula Kantor Desa, dipimpin langsung oleh Kepala Desa Paas, Bapak Agus Zenal.
-          </p>
-          <div class="pt-2">
-            <button onclick="bukaModalBerita(1)" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-desa-700 hover:bg-desa-800 text-white text-sm font-bold transition-all">
-              Baca Berita Lengkap <i class="fa-solid fa-arrow-right text-xs"></i>
-            </button>
-          </div>
-        </div>
+    <div id="beritaFeaturedContainer" class="hidden bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden p-8 sm:p-10">
+      <!-- Diisi secara dinamis oleh JavaScript jika ada berita -->
+    </div>
 
-        <div class="lg:col-span-5">
-          <div class="h-64 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-50 border border-emerald-200 flex flex-col items-center justify-center p-6 text-center shadow-inner">
-            <div class="w-16 h-16 rounded-full bg-emerald-700 text-white flex items-center justify-center text-3xl mb-3 shadow">
-              <i class="fa-solid fa-hand-holding-dollar"></i>
-            </div>
-            <span class="text-xs font-bold uppercase text-emerald-800 tracking-wider">Jaring Pengaman Sosial</span>
-            <p class="text-xs text-slate-500 mt-1 max-w-xs">Penyaluran Bantuan Langsung Tunai Dana Desa Paas Tahun 2026</p>
-          </div>
+    <!-- GRID ARTIKEL BERITA -->
+    <div id="beritaGridPage" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="col-span-full py-16 px-4 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="w-16 h-16 rounded-2xl bg-emerald-950/40 text-emerald-400 flex items-center justify-center mx-auto mb-3 text-3xl border border-emerald-800/60">
+          <i class="fa-regular fa-newspaper"></i>
         </div>
+        <h3 class="text-lg font-bold text-slate-800 dark:text-white">Belum Ada Publikasi Berita</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+          Seluruh contoh berita sebelumnya telah dibersihkan. Silakan masuk ke Portal Operator untuk mempublikasikan artikel dan dokumentasi kegiatan Desa Paas.
+        </p>
+        <a href="admin.html" class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-desa-600 hover:bg-desa-500 text-white text-xs font-bold transition-colors shadow">
+          <i class="fa-solid fa-pen-to-square"></i> Tulis Berita Pertama di Portal Operator
+        </a>
       </div>
     </div>
-
-    <!-- GRID ARTIKEL BERITA LAINNYA -->
-    <div id="beritaGridPage" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      
-      <!-- Artikel 2 -->
-      <article class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between card-hover">
-        <div>
-          <div class="h-40 rounded-2xl bg-blue-50 flex items-center justify-center text-5xl text-blue-600 mb-5 border border-blue-100">
-            <i class="fa-solid fa-road"></i>
-          </div>
-          <div class="flex items-center gap-2 mb-3">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Infrastruktur</span>
-            <span class="text-xs text-slate-400">05 Okt 2026</span>
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug hover:text-desa-700 cursor-pointer" onclick="bukaModalBerita(2)">
-            Peningkatan Jalan Lingkungan & Normalisasi Drainase Permukiman
-          </h3>
-          <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-            Pemerintah Desa Paas menuntaskan rabat beton jalan lingkungan serta pengerukan saluran drainase guna mengantisipasi genangan air saat musim penghujan di kawasan dataran rendah.
-          </p>
-        </div>
-        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-          <span class="text-xs text-slate-400">Oleh Tim TPK</span>
-          <button onclick="bukaModalBerita(2)" class="text-xs font-bold text-desa-700 hover:text-desa-900">
-            Baca Selengkapnya <i class="fa-solid fa-arrow-right ml-1"></i>
-          </button>
-        </div>
-      </article>
-
-      <!-- Artikel 3 -->
-      <article class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between card-hover">
-        <div>
-          <div class="h-40 rounded-2xl bg-rose-50 flex items-center justify-center text-5xl text-rose-600 mb-5 border border-rose-100">
-            <i class="fa-solid fa-baby"></i>
-          </div>
-          <div class="flex items-center gap-2 mb-3">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800">Kesehatan</span>
-            <span class="text-xs text-slate-400">28 Sep 2026</span>
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug hover:text-desa-700 cursor-pointer" onclick="bukaModalBerita(3)">
-            Pelayanan Terpadu Posyandu & Skrining Pencegahan Stunting Balita
-          </h3>
-          <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-            Kader PKK dan Posyandu Desa Paas secara berkala menggelar penimbangan berat badan, imunisasi, dan pembagian makanan tambahan bergizi berbahan pangan lokal sehat.
-          </p>
-        </div>
-        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-          <span class="text-xs text-slate-400">Oleh Kader PKK</span>
-          <button onclick="bukaModalBerita(3)" class="text-xs font-bold text-desa-700 hover:text-desa-900">
-            Baca Selengkapnya <i class="fa-solid fa-arrow-right ml-1"></i>
-          </button>
-        </div>
-      </article>
-
-      <!-- Artikel 4 -->
-      <article class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between card-hover">
-        <div>
-          <div class="h-40 rounded-2xl bg-purple-50 flex items-center justify-center text-5xl text-purple-600 mb-5 border border-purple-100">
-            <i class="fa-solid fa-comments"></i>
-          </div>
-          <div class="flex items-center gap-2 mb-3">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800">Perencanaan</span>
-            <span class="text-xs text-slate-400">18 Sep 2026</span>
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug hover:text-desa-700 cursor-pointer" onclick="bukaModalBerita(4)">
-            Musrenbangdes Desa Paas: Menjaring Aspirasi RKPDes Bersama Warga
-          </h3>
-          <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-            Musyawarah Perencanaan Pembangunan Desa menghadirkan jajaran Kepala Dusun 1, 2, 3, tokoh masyarakat, dan kelompok tani guna menyepakati prioritas pembangunan berjalan.
-          </p>
-        </div>
-        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-          <span class="text-xs text-slate-400">Oleh Sekretariat Desa</span>
-          <button onclick="bukaModalBerita(4)" class="text-xs font-bold text-desa-700 hover:text-desa-900">
-            Baca Selengkapnya <i class="fa-solid fa-arrow-right ml-1"></i>
-          </button>
-        </div>
-      </article>
-
-    </div>
-
   </main>
 
     <!-- MODAL BACA BERITA LENGKAP & BERBAGI MEDSOS -->
