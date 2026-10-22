@@ -505,7 +505,7 @@
         </a>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div id="beritaGridIndex" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
         <!-- Berita 1 -->
         <article class="bento-card p-5 flex flex-col justify-between">
@@ -702,7 +702,13 @@
 
       <div class="pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-3 text-center sm:text-left">
         <p>&copy; 2026 Pemerintah Desa Paas, Pameungpeuk - Garut. Hak Cipta Dilindungi.</p>
-        <p>Portal Resmi Pelayanan & Keterbukaan Informasi Publik</p>
+        <div class="flex items-center gap-3">
+          <p>Portal Resmi Pelayanan & Keterbukaan Informasi Publik</p>
+          <span class="text-slate-700 hidden sm:inline">&bull;</span>
+          <a href="admin.html" class="text-slate-500 hover:text-emerald-400 transition-colors flex items-center gap-1 font-medium text-[11px]" title="Portal Operator Pengelola Berita">
+            <i class="fa-solid fa-lock text-[9px]"></i> Login Operator
+          </a>
+        </div>
       </div>
     </div>
   </footer>
@@ -713,18 +719,40 @@
     <span>Layanan Desa</span>
   </a>
 
-  <!-- MODAL BACA BERITA LENGKAP -->
+    <!-- MODAL BACA BERITA LENGKAP & BERBAGI MEDSOS -->
   <div id="beritaModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm p-4 flex items-center justify-center">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-      <button onclick="tutupModalBerita()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl font-bold p-1">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto border border-slate-200 dark:border-slate-800">
+      <button onclick="tutupModalBerita()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-2xl font-bold p-1" aria-label="Tutup">
         &times;
       </button>
       <span id="modalKategori" class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 mb-3">Kategori</span>
-      <h3 id="modalJudul" class="text-xl sm:text-2xl font-extrabold text-slate-900 mb-2 leading-snug">Judul Berita</h3>
-      <p id="modalMeta" class="text-xs text-slate-400 mb-6 pb-4 border-b border-slate-100">Tanggal • Penulis</p>
-      <div id="modalIsi" class="text-slate-700 text-sm leading-relaxed space-y-4"></div>
-      <div class="mt-8 pt-4 border-t border-slate-100 flex justify-end">
-        <button onclick="tutupModalBerita()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors">
+      <h3 id="modalJudul" class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mb-2 leading-snug">Judul Berita</h3>
+      <p id="modalMeta" class="text-xs text-slate-400 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">Tanggal • Penulis</p>
+      
+      <!-- Foto Berita dari Operator -->
+      <div id="modalGambar" class="mb-5 hidden rounded-2xl overflow-hidden max-h-80 w-full border border-slate-200 dark:border-slate-800 shadow-sm">
+        <img id="modalGambarImg" src="" alt="Foto Berita" class="w-full h-full object-cover">
+      </div>
+
+      <div id="modalIsi" class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed space-y-4"></div>
+
+      <!-- FITUR SHARE KE MEDIA SOSIAL -->
+      <div class="mt-8 pt-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mr-1">
+            <i class="fa-solid fa-share-nodes text-desa-600 dark:text-emerald-400"></i> Bagikan:
+          </span>
+          <button type="button" onclick="shareBerita('wa')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm" title="Bagikan ke WhatsApp">
+            <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
+          </button>
+          <button type="button" onclick="shareBerita('fb')" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm" title="Bagikan ke Facebook">
+            <i class="fa-brands fa-facebook-f text-xs"></i> Facebook
+          </button>
+          <button type="button" onclick="shareBerita('copy')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-200 dark:border-slate-700" title="Salin Tautan">
+            <i class="fa-regular fa-copy"></i> <span id="copyText">Salin Link</span>
+          </button>
+        </div>
+        <button type="button" onclick="tutupModalBerita()" class="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors">
           Tutup
         </button>
       </div>

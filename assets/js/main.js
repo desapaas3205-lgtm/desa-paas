@@ -177,64 +177,141 @@ _Dikirim via Portal Website Desa Paas (Garut)_`;
   window.open(waUrl, '_blank');
 }
 
-// 6. Modal Berita Lengkap
-const BERITA_DATA = {
-  1: {
+// 6. Manajemen Berita Dinamis, Modal & Berbagi ke Media Sosial
+const DEFAULT_BERITA = {
+  "1": {
+    id: "1",
     kategori: "Bantuan Sosial",
     judul: "Penyaluran BLT Dana Desa (BLT-DD) Bagi Keluarga Penerima Manfaat di Desa Paas",
     tanggal: "12 Oktober 2026",
     penulis: "Pemerintah Desa Paas",
-    isi: `Pemerintah Desa Paas, Kecamatan Pameungpeuk, Kabupaten Garut kembali menyalurkan program Bantuan Langsung Tunai Dana Desa (BLT-DD) kepada Keluarga Penerima Manfaat (KPM) yang berhak menerima.
-
-Kegiatan penyaluran ini dipimpin langsung oleh Kepala Desa Paas, Bapak Agus Zenal, didampingi jajaran perangkat desa, BPD, pendamping desa, serta Babinsa dan Bhabinkamtibmas.
-
-Kepala Desa Paas menyampaikan bahwa bantuan ini ditujukan untuk menjaga daya beli masyarakat rentan, lansia tunggal, dan warga dengan penyakit menahun. Proses penyaluran berlangsung tertib dan transparan di Aula Kantor Desa Paas dengan jam pelayanan yang terjadwal rapi.`
+    ringkasan: "Pemerintah Desa Paas kembali menyalurkan Bantuan Langsung Tunai Dana Desa (BLT-DD) secara tertib dan transparan kepada KPM di Aula Kantor Desa, dipimpin langsung oleh Kepala Desa Paas, Bapak Agus Zenal.",
+    isi: `Pemerintah Desa Paas, Kecamatan Pameungpeuk, Kabupaten Garut kembali menyalurkan program Bantuan Langsung Tunai Dana Desa (BLT-DD) kepada Keluarga Penerima Manfaat (KPM) yang berhak menerima.\n\nKegiatan penyaluran ini dipimpin langsung oleh Kepala Desa Paas, Bapak Agus Zenal, didampingi jajaran perangkat desa, BPD, pendamping desa, serta Babinsa dan Bhabinkamtibmas.\n\nKepala Desa Paas menyampaikan bahwa bantuan ini ditujukan untuk menjaga daya beli masyarakat rentan, lansia tunggal, dan warga dengan penyakit menahun. Proses penyaluran berlangsung tertib dan transparan di Aula Kantor Desa Paas dengan jam pelayanan yang terjadwal rapi.`,
+    gambar: "",
+    icon: "fa-solid fa-hand-holding-dollar",
+    badgeColor: "bg-emerald-100 text-emerald-800"
   },
-  2: {
+  "2": {
+    id: "2",
     kategori: "Infrastruktur",
     judul: "Peningkatan Jalan Lingkungan & Normalisasi Drainase Permukiman Desa Paas",
     tanggal: "05 Oktober 2026",
     penulis: "Tim Pengelola Kegiatan (TPK)",
-    isi: `Sebagai komitmen mewujudkan konektivitas lingkungan yang aman dan nyaman, Pemerintah Desa Paas menuntaskan program pembangunan rabat beton jalan lingkungan dan pembersihan saluran drainase permukiman.
-
-Pengerjaan ini melibatkan partisipasi swadaya masyarakat dan kelompok gotong royong warga. Drainase yang baik sangat krusial mengingat Desa Paas berada di wilayah dataran rendah Pameungpeuk guna mencegah genangan air saat musim penghujan.`
+    ringkasan: "Pemerintah Desa Paas menuntaskan rabat beton jalan lingkungan serta pengerukan saluran drainase guna mengantisipasi genangan air saat musim penghujan di kawasan dataran rendah.",
+    isi: `Sebagai komitmen mewujudkan konektivitas lingkungan yang aman dan nyaman, Pemerintah Desa Paas menuntaskan program pembangunan rabat beton jalan lingkungan dan pembersihan saluran drainase permukiman.\n\nPengerjaan ini melibatkan partisipasi swadaya masyarakat dan kelompok gotong royong warga. Drainase yang baik sangat krusial mengingat Desa Paas berada di wilayah dataran rendah Pameungpeuk guna mencegah genangan air saat musim penghujan.`,
+    gambar: "",
+    icon: "fa-solid fa-road",
+    badgeColor: "bg-blue-100 text-blue-800"
   },
-  3: {
-    kategori: "Kesehatan Warga",
+  "3": {
+    id: "3",
+    kategori: "Kesehatan",
     judul: "Pelayanan Terpadu Posyandu & Skrining Pencegahan Stunting Balita Bersama Puskesmas",
     tanggal: "28 September 2026",
     penulis: "Kader Posyandu & PKK Desa Paas",
-    isi: `Kader PKK dan Posyandu Desa Paas secara berkala menggelar penimbangan berat badan, pengukuran tinggi badan balita, dan penyuluhan gizi bagi ibu hamil.
-
-Kegiatan ini merupakan bagian dari gerakan terpadu penurunan angka stunting di Kabupaten Garut, didukung dengan pemberian makanan tambahan (PMT) berbahan pangan lokal sehat seperti telur, sayuran, dan olahan ikan.`
+    ringkasan: "Kader PKK dan Posyandu Desa Paas secara berkala menggelar penimbangan berat badan, imunisasi, dan pembagian makanan tambahan bergizi berbahan pangan lokal sehat.",
+    isi: `Kader PKK dan Posyandu Desa Paas secara berkala menggelar penimbangan berat badan, pengukuran tinggi badan balita, dan penyuluhan gizi bagi ibu hamil.\n\nKegiatan ini merupakan bagian dari gerakan terpadu penurunan angka stunting di Kabupaten Garut, didukung dengan pemberian makanan tambahan (PMT) berbahan pangan lokal sehat seperti telur, sayuran, dan olahan ikan.`,
+    gambar: "",
+    icon: "fa-solid fa-baby",
+    badgeColor: "bg-rose-100 text-rose-800"
   },
-  4: {
+  "4": {
+    id: "4",
     kategori: "Perencanaan",
     judul: "Musrenbangdes Desa Paas: Menjaring Aspirasi Pembangunan Tahun Anggaran Mendatang",
     tanggal: "18 September 2026",
     penulis: "Sekretariat Desa Paas",
-    isi: `Musyawarah Perencanaan Pembangunan Desa (Musrenbangdes) Desa Paas diselenggarakan dengan menghadirkan seluruh elemen: Kepala Dusun 1 (Galih Mukhlis), Dusun 2 (Deni Sudian), Dusun 3 (Sutendi), tokoh agama, tokoh pemuda, dan kelompok tani.
-
-Fokus pembahasan mencakup alokasi ketahanan pangan, sarana pertanian, pemberdayaan UMKM lokal olahan laut/singkong, dan peningkatan pelayanan administrasi desa secara digital.`
+    ringkasan: "Musyawarah Perencanaan Pembangunan Desa menghadirkan jajaran Kepala Dusun 1, 2, 3, tokoh masyarakat, dan kelompok tani guna menyepakati prioritas pembangunan berjalan.",
+    isi: `Musyawarah Perencanaan Pembangunan Desa (Musrenbangdes) Desa Paas diselenggarakan dengan menghadirkan seluruh elemen: Kepala Dusun 1 (Galih Mukhlis), Dusun 2 (Deni Sudian), Dusun 3 (Sutendi), tokoh agama, tokoh pemuda, dan kelompok tani.\n\nFokus pembahasan mencakup alokasi ketahanan pangan, sarana pertanian, pemberdayaan UMKM lokal olahan laut/singkong, dan peningkatan pelayanan administrasi desa secara digital.`,
+    gambar: "",
+    icon: "fa-solid fa-comments",
+    badgeColor: "bg-purple-100 text-purple-800"
   }
 };
 
+// Ambil seluruh data berita aktif (Default + Custom Operator - Terhapus)
+function getSemuaBerita() {
+  const deletedIds = JSON.parse(localStorage.getItem('DESA_DELETED_BERITA') || '[]');
+  const customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
+
+  const defaultList = Object.values(DEFAULT_BERITA).filter(b => !deletedIds.includes(String(b.id)));
+  const customList = customBerita.filter(b => !deletedIds.includes(String(b.id)));
+
+  return [...customList, ...defaultList];
+}
+
+function getBeritaById(id) {
+  const all = getSemuaBerita();
+  return all.find(b => String(b.id) === String(id)) || DEFAULT_BERITA[id];
+}
+
+// Tambah berita baru dari operator
+function simpanBeritaBaru(data) {
+  const customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
+  const itemBaru = {
+    id: 'paas_' + Date.now(),
+    kategori: data.kategori || 'Pemerintahan',
+    judul: data.judul,
+    tanggal: data.tanggal || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+    penulis: data.penulis || 'Operator Desa Paas',
+    ringkasan: data.ringkasan || (data.isi.substring(0, 140) + '...'),
+    isi: data.isi,
+    gambar: data.gambar || '',
+    badgeColor: 'bg-emerald-100 text-emerald-800'
+  };
+  customBerita.unshift(itemBaru);
+  localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(customBerita));
+  return itemBaru;
+}
+
+// Hapus berita oleh operator
+function hapusBeritaById(id) {
+  const deletedIds = JSON.parse(localStorage.getItem('DESA_DELETED_BERITA') || '[]');
+  if (!deletedIds.includes(String(id))) {
+    deletedIds.push(String(id));
+    localStorage.setItem('DESA_DELETED_BERITA', JSON.stringify(deletedIds));
+  }
+  let customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
+  customBerita = customBerita.filter(b => String(b.id) !== String(id));
+  localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(customBerita));
+}
+
+// Variabel berita yang sedang aktif di modal pembaca
+let currentActiveBerita = null;
+
 function bukaModalBerita(id) {
-  const berita = BERITA_DATA[id];
+  const berita = getBeritaById(id);
   if (!berita) return;
+
+  currentActiveBerita = berita;
 
   const modal = document.getElementById('beritaModal');
   const modalKategori = document.getElementById('modalKategori');
   const modalJudul = document.getElementById('modalJudul');
   const modalMeta = document.getElementById('modalMeta');
   const modalIsi = document.getElementById('modalIsi');
+  const modalGambar = document.getElementById('modalGambar');
+  const modalGambarImg = document.getElementById('modalGambarImg');
 
   if (!modal) return;
 
-  modalKategori.textContent = berita.kategori;
-  modalJudul.textContent = berita.judul;
-  modalMeta.textContent = `${berita.tanggal} • Oleh ${berita.penulis}`;
-  modalIsi.innerHTML = berita.isi.split('\n\n').map(p => `<p class="mb-4 text-slate-700 leading-relaxed">${p}</p>`).join('');
+  if (modalKategori) modalKategori.textContent = berita.kategori;
+  if (modalJudul) modalJudul.textContent = berita.judul;
+  if (modalMeta) modalMeta.textContent = `${berita.tanggal} • Oleh ${berita.penulis}`;
+
+  if (modalGambar && modalGambarImg) {
+    if (berita.gambar) {
+      modalGambarImg.src = berita.gambar;
+      modalGambar.classList.remove('hidden');
+    } else {
+      modalGambar.classList.add('hidden');
+    }
+  }
+
+  if (modalIsi) {
+    const rawIsi = berita.isi || '';
+    modalIsi.innerHTML = rawIsi.split(/\n\n|\r\n\r\n/).map(p => `<p class="mb-4 text-slate-700 dark:text-slate-300 leading-relaxed">${p}</p>`).join('');
+  }
 
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -245,6 +322,146 @@ function tutupModalBerita() {
   if (modal) {
     modal.classList.add('hidden');
     document.body.style.overflow = 'auto';
+  }
+}
+
+// Fitur Berbagi Berita ke Media Sosial
+function shareBerita(platform) {
+  if (!currentActiveBerita) return;
+  const pageUrl = window.location.href.split('#')[0];
+  const shareText = `*${currentActiveBerita.judul}*\n\nBaca selengkapnya di Website Resmi Desa Paas:\n${pageUrl}`;
+
+  if (platform === 'wa') {
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+  } else if (platform === 'fb') {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`, '_blank');
+  } else if (platform === 'copy') {
+    navigator.clipboard.writeText(`${currentActiveBerita.judul}\n${pageUrl}`).then(() => {
+      const copyTextEl = document.getElementById('copyText');
+      if (copyTextEl) {
+        copyTextEl.textContent = 'Tersalin! ✓';
+        setTimeout(() => { copyTextEl.textContent = 'Salin Link'; }, 2000);
+      } else {
+        alert("Tautan berita berhasil disalin ke clipboard!");
+      }
+    }).catch(() => {
+      prompt("Salin tautan berita berikut:", pageUrl);
+    });
+  }
+}
+
+// Render Dinamis Berita di Halaman Depan & Berita
+function renderBeritaDynamic() {
+  const indexGrid = document.getElementById('beritaGridIndex');
+  const pageGrid = document.getElementById('beritaGridPage');
+  const featuredBox = document.getElementById('beritaFeaturedContainer');
+
+  const list = getSemuaBerita();
+
+  // 1. Render Beranda (index.html)
+  if (indexGrid && list.length > 0) {
+    const items = list.slice(0, 4);
+    indexGrid.innerHTML = items.map(b => `
+      <article class="bento-card p-5 flex flex-col justify-between group">
+        <div>
+          ${b.gambar ? `
+            <div class="h-36 rounded-xl overflow-hidden mb-3 bg-slate-100 dark:bg-slate-800">
+              <img src="${b.gambar}" alt="${b.judul}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            </div>
+          ` : ''}
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold ${b.badgeColor || 'bg-emerald-100 text-emerald-800'} mb-2.5">${b.kategori}</span>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-2 leading-snug hover:text-desa-600 dark:hover:text-emerald-400 cursor-pointer" onclick="bukaModalBerita('${b.id}')">
+            ${b.judul}
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed">
+            ${b.ringkasan || (b.isi.substring(0, 120) + '...')}
+          </p>
+        </div>
+        <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+          <span class="text-slate-400 dark:text-slate-500">${b.tanggal}</span>
+          <button onclick="bukaModalBerita('${b.id}')" class="font-bold text-desa-700 dark:text-emerald-400 hover:text-desa-900 dark:hover:text-emerald-300">
+            Baca <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </button>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  // 2. Render Halaman Berita (berita.html)
+  if (pageGrid && list.length > 0) {
+    const featured = list[0];
+    const rest = list.slice(1);
+
+    if (featuredBox && featured) {
+      featuredBox.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-7 space-y-4">
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full text-xs font-bold ${featured.badgeColor || 'bg-emerald-100 text-emerald-800'}">${featured.kategori}</span>
+              <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> ${featured.tanggal}</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-tight hover:text-desa-700 dark:hover:text-emerald-400 cursor-pointer" onclick="bukaModalBerita('${featured.id}')">
+              ${featured.judul}
+            </h2>
+            <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+              ${featured.ringkasan || (featured.isi.substring(0, 200) + '...')}
+            </p>
+            <div class="pt-2">
+              <button onclick="bukaModalBerita('${featured.id}')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-desa-700 hover:bg-desa-800 text-white text-sm font-bold transition-all shadow-sm">
+                Baca Berita Lengkap <i class="fa-solid fa-arrow-right text-xs"></i>
+              </button>
+            </div>
+          </div>
+          <div class="lg:col-span-5">
+            ${featured.gambar ? `
+              <div class="h-64 sm:h-72 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm">
+                <img src="${featured.gambar}" alt="${featured.judul}" class="w-full h-full object-cover">
+              </div>
+            ` : `
+              <div class="h-64 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-950/60 dark:to-slate-900 border border-emerald-200 dark:border-emerald-800/50 flex flex-col items-center justify-center p-6 text-center shadow-inner">
+                <div class="w-16 h-16 rounded-full bg-emerald-700 text-white flex items-center justify-center text-3xl mb-3 shadow">
+                  <i class="${featured.icon || 'fa-solid fa-newspaper'}"></i>
+                </div>
+                <span class="text-xs font-bold uppercase text-emerald-800 dark:text-emerald-300 tracking-wider">${featured.kategori}</span>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs">${featured.penulis}</p>
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    pageGrid.innerHTML = rest.map(b => `
+      <article class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between card-hover group">
+        <div>
+          ${b.gambar ? `
+            <div class="h-44 rounded-2xl overflow-hidden mb-4 bg-slate-100 dark:bg-slate-800">
+              <img src="${b.gambar}" alt="${b.judul}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            </div>
+          ` : `
+            <div class="h-40 rounded-2xl bg-emerald-50 dark:bg-slate-800/80 flex items-center justify-center text-5xl text-emerald-600 dark:text-emerald-400 mb-5 border border-emerald-100 dark:border-slate-700">
+              <i class="${b.icon || 'fa-solid fa-newspaper'}"></i>
+            </div>
+          `}
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${b.badgeColor || 'bg-emerald-100 text-emerald-800'}">${b.kategori}</span>
+            <span class="text-xs text-slate-400">${b.tanggal}</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 leading-snug hover:text-desa-700 dark:hover:text-emerald-400 cursor-pointer" onclick="bukaModalBerita('${b.id}')">
+            ${b.judul}
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
+            ${b.ringkasan || (b.isi.substring(0, 140) + '...')}
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <span class="text-xs text-slate-400">Oleh ${b.penulis}</span>
+          <button onclick="bukaModalBerita('${b.id}')" class="text-xs font-bold text-desa-700 dark:text-emerald-400 hover:text-desa-900 dark:hover:text-emerald-300">
+            Baca Selengkapnya <i class="fa-solid fa-arrow-right ml-1"></i>
+          </button>
+        </div>
+      </article>
+    `).join('');
   }
 }
 
@@ -316,6 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initThemeToggle();
   initOfficeStatus();
   initMobileMenu();
+  renderBeritaDynamic();
 
   // Listener jenis surat
   const suratJenisSelect = document.getElementById('suratJenis');
