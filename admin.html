@@ -388,27 +388,105 @@
   </div>
 
   <!-- JAVASCRIPT LOGIC ADMIN (TERHUBUNG KE SUPABASE CLOUD) -->
-  <script src="assets/js/main.js?v=20261022_02"></script>
   <script>
+    // Kredensial Resmi Operator Desa Paas
+    var OPERATOR_USER = "operator";
+    var OPERATOR_PASS = "desapaas2003";
+
     // Konfigurasi Supabase Cloud Database Resmi Desa Paas
-    const SUPABASE_CONFIG = {
+    window.SUPABASE_CONFIG = window.SUPABASE_CONFIG || {
       url: 'https://uibidfauocfrjneoexzi.supabase.co',
       key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpYmlkZmF1b2NmcmpuZW9leHppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MzQ2NDQsImV4cCI6MjEwODIxMDY0NH0.fnmwxVzCZ30mweqpa0gLL0Fbn9QaQFWeQkIIgB137To'
     };
+    var SUPABASE_CONFIG = window.SUPABASE_CONFIG;
 
-    // Kredensial Default Operator
-    const OPERATOR_USER = "operator";
-    const OPERATOR_PASS = "desapaas2003";
+    var tempBase64Foto = "";
+    var itemToDeleteId = null;
+    var newlyPublishedBerita = null;
 
-    let tempBase64Foto = "";
-    let itemToDeleteId = null;
-    let newlyPublishedBerita = null;
+    // 1. Fungsi Toggle Lihat/Sembunyikan Sandi
+    function togglePasswordVisibility() {
+      var pass = document.getElementById('loginPassword');
+      var eye = document.getElementById('eyeIcon');
+      if (!pass || !eye) return;
+      if (pass.type === 'password') {
+        pass.type = 'text';
+        eye.classList.remove('fa-eye');
+        eye.classList.add('fa-eye-slash');
+      } else {
+        pass.type = 'password';
+        eye.classList.remove('fa-eye-slash');
+        eye.classList.add('fa-eye');
+      }
+    }
 
-    // Cache Lokal Berita
+    // 2. Fungsi Login Operator
+    function handleLoginSubmit(e) {
+      if (e) e.preventDefault();
+      var userEl = document.getElementById('loginUsername');
+      var passEl = document.getElementById('loginPassword');
+      var errBox = document.getElementById('loginError');
+
+      var user = (userEl ? userEl.value : '').trim().toLowerCase();
+      var pass = (passEl ? passEl.value : '').trim();
+
+      if (user === OPERATOR_USER && pass === OPERATOR_PASS) {
+        try {
+          sessionStorage.setItem('OPERATOR_LOGGED_IN', 'true');
+        } catch (err) {}
+        if (errBox) errBox.classList.add('hidden');
+        showDashboard();
+      } else {
+        if (errBox) {
+          errBox.classList.remove('hidden');
+          var errMsg = document.getElementById('loginErrorMsg');
+          if (errMsg) errMsg.textContent = "Username atau kata sandi tidak valid. Silakan coba kembali.";
+        }
+      }
+      return false;
+    }
+
+    function handleLogout() {
+      try {
+        sessionStorage.removeItem('OPERATOR_LOGGED_IN');
+      } catch (err) {}
+      showLogin();
+      var userInp = document.getElementById('loginUsername');
+      var passInp = document.getElementById('loginPassword');
+      if (userInp) userInp.value = '';
+      if (passInp) passInp.value = '';
+    }
+
+    function showLogin() {
+      var loginSec = document.getElementById('loginSection');
+      var dashSec = document.getElementById('dashboardSection');
+      var logoutBtn = document.getElementById('headerLogoutBtn');
+      if (loginSec) loginSec.classList.remove('hidden');
+      if (dashSec) dashSec.classList.add('hidden');
+      if (logoutBtn) logoutBtn.classList.add('hidden');
+    }
+
+    function showDashboard() {
+      try {
+        var loginSec = document.getElementById('loginSection');
+        var dashSec = document.getElementById('dashboardSection');
+        var logoutBtn = document.getElementById('headerLogoutBtn');
+        if (loginSec) loginSec.classList.add('hidden');
+        if (dashSec) dashSec.classList.remove('hidden');
+        if (logoutBtn) logoutBtn.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        renderListBerita();
+        updateDashboardStats();
+      } catch (err) {
+        console.error("Gagal membuka dashboard:", err);
+      }
+    }
+
+    // 3. Cache Lokal Berita
     function getSemuaBeritaLokal() {
       try {
-        const customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
-        return customBerita.filter(b => !['1', '2', '3', '4'].includes(String(b.id)));
+        var customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
+        return customBerita.filter(function(b) { return !['1', '2', '3', '4'].includes(String(b.id)); });
       } catch (e) {
         return [];
       }
@@ -419,33 +497,35 @@
     }
 
     function getBeritaById(id) {
-      const all = getSemuaBerita();
-      return all.find(b => String(b.id) === String(id));
+      var all = getSemuaBerita();
+      return all.find(function(b) { return String(b.id) === String(id); });
     }
 
-    // Tarik data berita terbaru dari Cloud Supabase
+    // 4. Tarik data berita terbaru dari Cloud Supabase
     async function fetchBeritaFromSupabase() {
       try {
-        const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/berita?select=*&order=created_at.desc`, {
+        var res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/berita?select=*&order=created_at.desc`, {
           headers: {
             'apikey': SUPABASE_CONFIG.key,
             'Authorization': `Bearer ${SUPABASE_CONFIG.key}`
           }
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        var data = await res.json();
         
-        const normalized = data.map(b => ({
-          id: b.id,
-          kategori: b.kategori || 'Pemerintahan',
-          judul: b.judul,
-          tanggal: b.tanggal,
-          penulis: b.penulis,
-          ringkasan: b.ringkasan || (b.isi ? b.isi.substring(0, 140) + '...' : ''),
-          isi: b.isi,
-          gambar: b.gambar || '',
-          badgeColor: b.badge_color || 'bg-emerald-100 text-emerald-800'
-        }));
+        var normalized = data.map(function(b) {
+          return {
+            id: b.id,
+            kategori: b.kategori || 'Pemerintahan',
+            judul: b.judul,
+            tanggal: b.tanggal,
+            penulis: b.penulis,
+            ringkasan: b.ringkasan || (b.isi ? b.isi.substring(0, 140) + '...' : ''),
+            isi: b.isi,
+            gambar: b.gambar || '',
+            badgeColor: b.badge_color || 'bg-emerald-100 text-emerald-800'
+          };
+        });
 
         localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(normalized));
         return normalized;
@@ -455,21 +535,21 @@
       }
     }
 
-    // Simpan Berita Baru ke Supabase Cloud
+    // 5. Simpan Berita Baru ke Supabase Cloud
     async function simpanBeritaBaru(data) {
-      const itemBaru = {
+      var itemBaru = {
         id: 'paas_' + Date.now(),
         kategori: data.kategori || 'Pemerintahan',
         judul: data.judul,
         tanggal: data.tanggal || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
         penulis: data.penulis || 'Pemerintah Desa Paas',
-        ringkasan: data.ringkasan || (data.isi.substring(0, 140) + '...'),
+        ringkasan: data.ringkasan || (data.isi ? data.isi.substring(0, 140) + '...' : ''),
         isi: data.isi,
         gambar: data.gambar || '',
         badge_color: 'bg-emerald-100 text-emerald-800'
       };
 
-      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/berita`, {
+      var res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/berita`, {
         method: 'POST',
         headers: {
           'apikey': SUPABASE_CONFIG.key,
@@ -481,12 +561,12 @@
       });
 
       if (!res.ok) {
-        const errText = await res.text();
+        var errText = await res.text();
         throw new Error(`Gagal menyimpan ke Cloud (Status ${res.status}): ${errText}`);
       }
 
       // Simpan salinan lokal
-      let customBerita = getSemuaBeritaLokal();
+      var customBerita = getSemuaBeritaLokal();
       customBerita.unshift({
         ...itemBaru,
         badgeColor: itemBaru.badge_color
@@ -499,7 +579,7 @@
       };
     }
 
-    // Hapus Berita dari Supabase Cloud
+    // 6. Hapus Berita dari Supabase Cloud
     async function hapusBeritaById(id) {
       try {
         await fetch(`${SUPABASE_CONFIG.url}/rest/v1/berita?id=eq.${id}`, {
@@ -513,102 +593,39 @@
         console.error("Gagal menghapus dari Cloud:", err);
       }
 
-      let customBerita = getSemuaBeritaLokal().filter(b => String(b.id) !== String(id));
+      var customBerita = getSemuaBeritaLokal().filter(function(b) { return String(b.id) !== String(id); });
       localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(customBerita));
     }
 
-    // Cek status sesi saat pertama kali halaman dimuat
-    document.addEventListener('DOMContentLoaded', () => {
-      const inputTanggal = document.getElementById('beritaTanggal');
+    // 7. Cek status sesi saat pertama kali halaman dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+      var inputTanggal = document.getElementById('beritaTanggal');
       if (inputTanggal) {
         inputTanggal.value = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
       }
 
-      if (sessionStorage.getItem('OPERATOR_LOGGED_IN') === 'true') {
+      var loggedIn = false;
+      try {
+        if (sessionStorage.getItem('OPERATOR_LOGGED_IN') === 'true') {
+          loggedIn = true;
+        }
+      } catch (e) {}
+
+      if (loggedIn) {
         showDashboard();
       } else {
         showLogin();
       }
     });
 
-        // Kredensial Resmi Operator Desa Paas
-
-    function togglePasswordVisibility() {
-      const pass = document.getElementById('loginPassword');
-      const eye = document.getElementById('eyeIcon');
-      if (pass.type === 'password') {
-        pass.type = 'text';
-        eye.classList.remove('fa-eye');
-        eye.classList.add('fa-eye-slash');
-      } else {
-        pass.type = 'password';
-        eye.classList.remove('fa-eye-slash');
-        eye.classList.add('fa-eye');
-      }
-    }
-
-    function handleLoginSubmit(e) {
-      if (e) e.preventDefault();
-      const user = (document.getElementById('loginUsername').value || '').trim().toLowerCase();
-      const pass = (document.getElementById('loginPassword').value || '').trim();
-      const errBox = document.getElementById('loginError');
-
-      if (user === OPERATOR_USER && pass === OPERATOR_PASS) {
-        try {
-          sessionStorage.setItem('OPERATOR_LOGGED_IN', 'true');
-        } catch (err) {}
-        if (errBox) errBox.classList.add('hidden');
-        showDashboard();
-      } else {
-        if (errBox) {
-          errBox.classList.remove('hidden');
-          const errMsg = document.getElementById('loginErrorMsg');
-          if (errMsg) errMsg.textContent = "Username atau kata sandi tidak valid. Silakan coba kembali.";
-        }
-      }
-    }
-
-    function handleLogout() {
-      try {
-        sessionStorage.removeItem('OPERATOR_LOGGED_IN');
-      } catch (err) {}
-      showLogin();
-      const userInp = document.getElementById('loginUsername');
-      const passInp = document.getElementById('loginPassword');
-      if (userInp) userInp.value = '';
-      if (passInp) passInp.value = '';
-    }
-
-    function showLogin() {
-      const loginSec = document.getElementById('loginSection');
-      const dashSec = document.getElementById('dashboardSection');
-      const logoutBtn = document.getElementById('headerLogoutBtn');
-      if (loginSec) loginSec.classList.remove('hidden');
-      if (dashSec) dashSec.classList.add('hidden');
-      if (logoutBtn) logoutBtn.classList.add('hidden');
-    }
-
-    function showDashboard() {
-      try {
-        const loginSec = document.getElementById('loginSection');
-        const dashSec = document.getElementById('dashboardSection');
-        const logoutBtn = document.getElementById('headerLogoutBtn');
-        if (loginSec) loginSec.classList.add('hidden');
-        if (dashSec) dashSec.classList.remove('hidden');
-        if (logoutBtn) logoutBtn.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        renderListBerita();
-        updateDashboardStats();
-      } catch (err) {
-        console.error("Gagal membuka dashboard:", err);
-      }
-    }
-
+    // 8. Tab Switch
     function switchTab(tab) {
-      const tabBtnForm = document.getElementById('tabBtnForm');
-      const tabBtnList = document.getElementById('tabBtnList');
-      const tabContentForm = document.getElementById('tabContentForm');
-      const tabContentList = document.getElementById('tabContentList');
+      var tabBtnForm = document.getElementById('tabBtnForm');
+      var tabBtnList = document.getElementById('tabBtnList');
+      var tabContentForm = document.getElementById('tabContentForm');
+      var tabContentList = document.getElementById('tabContentList');
+
+      if (!tabBtnForm || !tabBtnList || !tabContentForm || !tabContentList) return;
 
       if (tab === 'form') {
         tabBtnForm.className = "flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-desa-600 text-white flex items-center justify-center gap-2 transition-all";
@@ -624,19 +641,19 @@
       }
     }
 
-    // Handle Upload Foto & Resize to Base64 (Hemat Kuota)
+    // 9. Handle Upload Foto & Resize to Base64
     function handleFotoUpload(e) {
-      const file = e.target.files[0];
+      var file = e.target.files[0];
       if (!file) return;
 
-      const reader = new FileReader();
+      var reader = new FileReader();
       reader.onload = function(event) {
-        const img = new Image();
+        var img = new Image();
         img.onload = function() {
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          const maxDim = 800;
+          var canvas = document.createElement('canvas');
+          var width = img.width;
+          var height = img.height;
+          var maxDim = 800;
           if (width > maxDim || height > maxDim) {
             if (width > height) {
               height = Math.round((height * maxDim) / width);
@@ -648,7 +665,7 @@
           }
           canvas.width = width;
           canvas.height = height;
-          const ctx = canvas.getContext('2d');
+          var ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
           tempBase64Foto = canvas.toDataURL('image/jpeg', 0.70);
 
@@ -670,25 +687,25 @@
 
     function resetFormBerita() {
       hapusFotoPreview();
-      const inputTanggal = document.getElementById('beritaTanggal');
+      var inputTanggal = document.getElementById('beritaTanggal');
       if (inputTanggal) {
         inputTanggal.value = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
       }
     }
 
-    // Submit Berita Baru ke Supabase Cloud
+    // 10. Submit Berita Baru ke Supabase Cloud
     async function handleTambahBeritaSubmit(e) {
-      e.preventDefault();
-      const submitBtn = document.querySelector('#formTambahBerita button[type="submit"]');
-      const originalHTML = submitBtn ? submitBtn.innerHTML : '';
+      if (e) e.preventDefault();
+      var submitBtn = document.querySelector('#formTambahBerita button[type="submit"]');
+      var originalHTML = submitBtn ? submitBtn.innerHTML : '';
 
       try {
-        const judul = document.getElementById('beritaJudul').value.trim();
-        const kategori = document.getElementById('beritaKategori').value;
-        const penulis = document.getElementById('beritaPenulis').value.trim();
-        const tanggal = document.getElementById('beritaTanggal').value.trim();
-        const ringkasan = document.getElementById('beritaRingkasan').value.trim();
-        const isi = document.getElementById('beritaIsi').value.trim();
+        var judul = (document.getElementById('beritaJudul').value || '').trim();
+        var kategori = document.getElementById('beritaKategori').value;
+        var penulis = (document.getElementById('beritaPenulis').value || '').trim();
+        var tanggal = (document.getElementById('beritaTanggal').value || '').trim();
+        var ringkasan = (document.getElementById('beritaRingkasan').value || '').trim();
+        var isi = (document.getElementById('beritaIsi').value || '').trim();
 
         if (!judul || !isi) {
           alert("Mohon lengkapi judul dan isi berita.");
@@ -700,13 +717,13 @@
           submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan ke Cloud...';
         }
 
-        const itemBaru = await simpanBeritaBaru({
-          judul,
-          kategori,
+        var itemBaru = await simpanBeritaBaru({
+          judul: judul,
+          kategori: kategori,
           penulis: penulis || 'Pemerintah Desa Paas',
           tanggal: tanggal || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-          ringkasan: ringkasan || (isi.substring(0, 140) + '...'),
-          isi,
+          ringkasan: ringkasan || (isi ? isi.substring(0, 140) + '...' : ''),
+          isi: isi,
           gambar: tempBase64Foto
         });
 
@@ -739,30 +756,30 @@
       switchTab('list');
     }
 
-    // Operator Share dari Modal Sukses
+    // 11. Operator Share
     function operatorShare(platform) {
       if (!newlyPublishedBerita) return;
-      const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', 'berita.html');
-      const shareText = `*${newlyPublishedBerita.judul}*\n\nKabar informasi resmi dari Pemerintah Desa Paas:\n${baseUrl}`;
+      var baseUrl = window.location.origin + window.location.pathname.replace('admin.html', 'berita.html').replace('admin', 'berita');
+      var shareText = `*${newlyPublishedBerita.judul}*\n\nKabar informasi resmi dari Pemerintah Desa Paas:\n${baseUrl}`;
 
       if (platform === 'wa') {
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
       } else if (platform === 'fb') {
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(baseUrl)}`, '_blank');
       } else if (platform === 'copy') {
-        navigator.clipboard.writeText(`${newlyPublishedBerita.judul}\n${baseUrl}`).then(() => {
-          const btn = document.getElementById('opCopyText');
+        navigator.clipboard.writeText(`${newlyPublishedBerita.judul}\n${baseUrl}`).then(function() {
+          var btn = document.getElementById('opCopyText');
           if (btn) {
             btn.textContent = 'Link Berhasil Disalin! ✓';
-            setTimeout(() => { btn.textContent = 'Salin Tautan Berita'; }, 2000);
+            setTimeout(function() { btn.textContent = 'Salin Tautan Berita'; }, 2000);
           }
         });
       }
     }
 
-    // Render Daftar Berita di Tab 2 (Tersinkronisasi Cloud)
+    // 12. Render Daftar Berita di Tab 2
     async function renderListBerita() {
-      const container = document.getElementById('listBeritaContainer');
+      var container = document.getElementById('listBeritaContainer');
       if (!container) return;
 
       function renderItems(list) {
@@ -773,8 +790,8 @@
                 <i class="fa-solid fa-newspaper"></i>
               </div>
               <p class="text-sm font-semibold text-white">Belum ada berita yang diterbitkan.</p>
-              <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Seluruh contoh berita lama telah dibersihkan. Klik tombol di bawah untuk mempublikasikan artikel pertama.</p>
-              <button onclick="switchTab('form')" class="mt-4 px-4 py-2 rounded-xl bg-desa-600 hover:bg-desa-500 text-white text-xs font-bold transition-colors">
+              <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Klik tab "Tulis Berita Baru" untuk mempublikasikan artikel pertama.</p>
+              <button type="button" onclick="switchTab('form')" class="mt-4 px-4 py-2 rounded-xl bg-desa-600 hover:bg-desa-500 text-white text-xs font-bold transition-colors">
                 <i class="fa-solid fa-plus mr-1"></i> Tulis Berita Sekarang
               </button>
             </div>
@@ -782,8 +799,77 @@
           return;
         }
 
-        container.innerHTML = list.map(b => `
-          <div class="bg-slate-900/90 rounded-2xl p-4 sm:p-5 border border-slate-700/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-slate-600 transition-colors">
+        container.innerHTML = list.map(function(b) {
+          var ringkasanTeks = b.ringkasan || (b.isi ? b.isi.substring(0, 100) : '');
+          return `
+            <div class="bg-slate-900/90 rounded-2xl p-4 sm:p-5 border border-slate-700/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-slate-600 transition-colors">
+              <div class="flex items-start gap-4">
+                ${b.gambar ? `
+                  <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-slate-700">
+                    <img src="${b.gambar}" alt="${b.judul}" class="w-full h-full object-cover">
+                  </div>
+                ` : `
+                  <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-slate-800 text-emerald-400 flex items-center justify-center shrink-0 text-2xl border border-slate-700">
+                    <i class="fa-solid fa-newspaper"></i>
+                  </div>
+                `}
+                <div>
+                  <div class="flex flex-wrap items-center gap-2 mb-1">
+                    <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800">${b.kategori}</span>
+                    <span class="text-[11px] text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> ${b.tanggal}</span>
+                    <span class="text-[11px] text-slate-400">&bull; Oleh ${b.penulis}</span>
+                  </div>
+                  <h4 class="text-sm sm:text-base font-bold text-white leading-snug">${b.judul}</h4>
+                  <p class="text-xs text-slate-400 line-clamp-1 mt-1">${ringkasanTeks}</p>
+                </div>
+              </div>
+
+              <!-- Tombol Aksi Hapus & Bagikan -->
+              <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                <button type="button" onclick="shareSpesifikBerita('${b.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-700" title="Bagikan Berita">
+                  <i class="fa-solid fa-share-nodes text-emerald-400"></i> <span class="hidden sm:inline">Bagikan</span>
+                </button>
+                <button type="button" onclick="konfirmasiHapus('${b.id}')" class="px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-200 text-xs font-bold flex items-center gap-1.5 transition-colors border border-red-800" title="Hapus Berita Ini">
+                  <i class="fa-solid fa-trash-can"></i> <span class="hidden sm:inline">Hapus</span>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 1. Tampilkan data lokal segera
+      var initial = getSemuaBeritaLokal();
+      renderItems(initial);
+
+      // 2. Tarik dari Supabase Cloud
+      try {
+        var cloudData = await fetchBeritaFromSupabase();
+        renderItems(cloudData);
+        updateDashboardStats();
+      } catch (e) {
+        console.warn("Gagal refresh list dari cloud:", e);
+      }
+    }
+
+    function filterDaftarBerita() {
+      var q = (document.getElementById('filterBeritaInput').value || '').toLowerCase();
+      var container = document.getElementById('listBeritaContainer');
+      var all = getSemuaBerita();
+      var filtered = all.filter(function(b) { return b.judul.toLowerCase().includes(q) || b.kategori.toLowerCase().includes(q); });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-500 text-xs">
+            Tidak ditemukan berita dengan kata kunci "${q}".
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(function(b) {
+        return `
+          <div class="bg-slate-900/90 rounded-2xl p-4 sm:p-5 border border-slate-700/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div class="flex items-start gap-4">
               ${b.gambar ? `
                 <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-slate-700">
@@ -795,93 +881,29 @@
                 </div>
               `}
               <div>
-                <div class="flex flex-wrap items-center gap-2 mb-1">
-                  <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800">${b.kategori}</span>
-                  <span class="text-[11px] text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> ${b.tanggal}</span>
-                  <span class="text-[11px] text-slate-400">&bull; Oleh ${b.penulis}</span>
-                </div>
-                <h4 class="text-sm sm:text-base font-bold text-white leading-snug">${b.judul}</h4>
-                <p class="text-xs text-slate-400 line-clamp-1 mt-1">${b.ringkasan || (b.isi ? b.isi.substring(0, 100) : '')}</p>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800">${b.kategori}</span>
+                <h4 class="text-sm sm:text-base font-bold text-white mt-1">${b.judul}</h4>
+                <p class="text-xs text-slate-400 line-clamp-1 mt-0.5">${b.tanggal} &bull; ${b.penulis}</p>
               </div>
             </div>
-
-            <!-- Tombol Aksi Hapus & Bagikan -->
             <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
-              <button onclick="shareSpesifikBerita('${b.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-700" title="Bagikan Berita">
-                <i class="fa-solid fa-share-nodes text-emerald-400"></i> <span class="hidden sm:inline">Bagikan</span>
+              <button type="button" onclick="shareSpesifikBerita('${b.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 border border-slate-700">
+                <i class="fa-solid fa-share-nodes text-emerald-400"></i>
               </button>
-              <button onclick="konfirmasiHapus('${b.id}')" class="px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-200 text-xs font-bold flex items-center gap-1.5 transition-colors border border-red-800" title="Hapus Berita Ini">
-                <i class="fa-solid fa-trash-can"></i> <span class="hidden sm:inline">Hapus</span>
+              <button type="button" onclick="konfirmasiHapus('${b.id}')" class="px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-200 text-xs font-bold flex items-center gap-1.5 border border-red-800">
+                <i class="fa-solid fa-trash-can"></i> Hapus
               </button>
             </div>
-          </div>
-        `).join('');
-      }
-
-      // 1. Tampilkan data lokal segera
-      const initial = getSemuaBeritaLokal();
-      renderItems(initial);
-
-      // 2. Tarik dari Supabase Cloud
-      try {
-        const cloudData = await fetchBeritaFromSupabase();
-        renderItems(cloudData);
-        updateDashboardStats();
-      } catch (e) {
-        console.warn("Gagal refresh list dari cloud:", e);
-      }
-    }
-
-    function filterDaftarBerita() {
-      const q = document.getElementById('filterBeritaInput').value.toLowerCase();
-      const container = document.getElementById('listBeritaContainer');
-      const all = getSemuaBerita();
-      const filtered = all.filter(b => b.judul.toLowerCase().includes(q) || b.kategori.toLowerCase().includes(q));
-
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-8 text-slate-500 text-xs">
-            Tidak ditemukan berita dengan kata kunci "${q}".
           </div>
         `;
-        return;
-      }
-
-      container.innerHTML = filtered.map(b => `
-        <div class="bg-slate-900/90 rounded-2xl p-4 sm:p-5 border border-slate-700/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div class="flex items-start gap-4">
-            ${b.gambar ? `
-              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-slate-700">
-                <img src="${b.gambar}" alt="${b.judul}" class="w-full h-full object-cover">
-              </div>
-            ` : `
-              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-slate-800 text-emerald-400 flex items-center justify-center shrink-0 text-2xl border border-slate-700">
-                <i class="fa-solid fa-newspaper"></i>
-              </div>
-            `}
-            <div>
-              <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800">${b.kategori}</span>
-              <h4 class="text-sm sm:text-base font-bold text-white mt-1">${b.judul}</h4>
-              <p class="text-xs text-slate-400 line-clamp-1 mt-0.5">${b.tanggal} &bull; ${b.penulis}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
-            <button onclick="shareSpesifikBerita('${b.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 border border-slate-700">
-              <i class="fa-solid fa-share-nodes text-emerald-400"></i>
-            </button>
-            <button onclick="konfirmasiHapus('${b.id}')" class="px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-200 text-xs font-bold flex items-center gap-1.5 border border-red-800">
-              <i class="fa-solid fa-trash-can"></i> Hapus
-            </button>
-          </div>
-        </div>
-      `).join('');
+      }).join('');
     }
 
-    // Modal Konfirmasi Hapus
+    // 13. Modal Konfirmasi Hapus
     function konfirmasiHapus(id) {
       itemToDeleteId = id;
-      const b = getBeritaById(id);
-      const judul = b ? b.judul : 'berita ini';
+      var b = getBeritaById(id);
+      var judul = b ? b.judul : 'berita ini';
       document.getElementById('hapusKonfirmasiTeks').innerHTML = `Apakah Anda yakin ingin menghapus artikel: <br><strong class="text-white mt-1 inline-block">"${judul}"</strong>?`;
       document.getElementById('modalKonfirmasiHapus').classList.remove('hidden');
     }
@@ -893,7 +915,7 @@
 
     async function eksekusiHapusBerita() {
       if (itemToDeleteId) {
-        const idToDelete = itemToDeleteId;
+        var idToDelete = itemToDeleteId;
         itemToDeleteId = null;
         document.getElementById('modalKonfirmasiHapus').classList.add('hidden');
         await hapusBeritaById(idToDelete);
@@ -903,7 +925,7 @@
     }
 
     function shareSpesifikBerita(id) {
-      const b = getBeritaById(id);
+      var b = getBeritaById(id);
       if (!b) return;
       newlyPublishedBerita = b;
       document.getElementById('modalSuksesJudul').textContent = b.judul;
@@ -911,8 +933,8 @@
     }
 
     function updateDashboardStats() {
-      const list = getSemuaBerita();
-      const statEl = document.getElementById('statTotalBerita');
+      var list = getSemuaBerita();
+      var statEl = document.getElementById('statTotalBerita');
       if (statEl) statEl.textContent = `${list.length} Berita`;
     }
   </script>
