@@ -88,34 +88,34 @@
           <i class="fa-solid fa-user-shield text-2xl text-emerald-400"></i>
         </div>
         <h1 class="text-2xl font-extrabold text-white">Login Operator Desa</h1>
-        <p class="text-xs text-slate-400 mt-1">Masuk untuk mempublikasikan artikel kegiatan & kelola berita Desa Paas.</p>
+        <p class="text-xs text-slate-400 mt-1">Portal otorisasi resmi Pemerintah Desa Paas.</p>
       </div>
 
       <!-- Alert Error -->
       <div id="loginError" class="hidden mb-4 p-3 rounded-xl bg-red-950/80 border border-red-800 text-red-200 text-xs flex items-center gap-2">
-        <i class="fa-solid fa-triangle-exclamation text-red-400 shrink-0"></i>
-        <span id="loginErrorMsg">Username atau password salah.</span>
+        <i class="fa-solid fa-circle-exclamation text-red-400 shrink-0"></i>
+        <span id="loginErrorMsg">Username atau kata sandi tidak valid.</span>
       </div>
 
       <form id="formLoginOperator" onsubmit="handleLoginSubmit(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1.5">Username / Email Operator</label>
+          <label class="block text-xs font-bold text-slate-300 mb-1.5">Username Operator</label>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
               <i class="fa-solid fa-user text-sm"></i>
             </span>
-            <input type="text" id="loginUsername" required class="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="operator">
+            <input type="text" id="loginUsername" required autocapitalize="none" autocomplete="username" spellcheck="false" class="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Masukkan username">
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1.5">Kata Sandi / Password</label>
+          <label class="block text-xs font-bold text-slate-300 mb-1.5">Kata Sandi</label>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
               <i class="fa-solid fa-lock text-sm"></i>
             </span>
-            <input type="password" id="loginPassword" required class="w-full pl-10 pr-10 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-emerald-500" placeholder="••••••••">
-            <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white">
+            <input type="password" id="loginPassword" required autocapitalize="none" autocomplete="current-password" class="w-full pl-10 pr-10 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Masukkan kata sandi">
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white" title="Lihat/Sembunyikan Sandi">
               <i id="eyeIcon" class="fa-regular fa-eye text-sm"></i>
             </button>
           </div>
@@ -125,16 +125,7 @@
           <i class="fa-solid fa-right-to-bracket"></i> Masuk ke Dashboard
         </button>
       </form>
-
-      <!-- Informasi Akses Awal untuk Operator -->
-      <div class="mt-6 pt-4 border-t border-slate-700/60 text-center">
-        <p class="text-[11px] text-slate-400">
-          <i class="fa-solid fa-circle-info text-emerald-400 mr-1"></i>
-          Akun Bawaan: <span class="text-white font-mono font-bold">operator</span> &bull; Sandi: <span class="text-white font-mono font-bold">desapaas2026</span>
-        </p>
-      </div>
     </div>
-
 
     <!-- 2. DASHBOARD OPERATOR BERITA (TAMPIL SETELAH LOGIN) -->
     <div id="dashboardSection" class="hidden w-full max-w-5xl space-y-6">
@@ -407,7 +398,7 @@
 
     // Kredensial Default Operator
     const OPERATOR_USER = "operator";
-    const OPERATOR_PASS = "desapaas2026";
+    const OPERATOR_PASS = "desapaas2003";
 
     let tempBase64Foto = "";
     let itemToDeleteId = null;
@@ -540,6 +531,8 @@
       }
     });
 
+        // Kredensial Resmi Operator Desa Paas
+
     function togglePasswordVisibility() {
       const pass = document.getElementById('loginPassword');
       const eye = document.getElementById('eyeIcon');
@@ -555,37 +548,60 @@
     }
 
     function handleLoginSubmit(e) {
-      e.preventDefault();
-      const user = document.getElementById('loginUsername').value.trim();
-      const pass = document.getElementById('loginPassword').value.trim();
+      if (e) e.preventDefault();
+      const user = (document.getElementById('loginUsername').value || '').trim().toLowerCase();
+      const pass = (document.getElementById('loginPassword').value || '').trim();
       const errBox = document.getElementById('loginError');
 
-      if ((user === OPERATOR_USER || user === 'admin@desapaas.id') && pass === OPERATOR_PASS) {
-        sessionStorage.setItem('OPERATOR_LOGGED_IN', 'true');
-        errBox.classList.add('hidden');
+      if (user === OPERATOR_USER && pass === OPERATOR_PASS) {
+        try {
+          sessionStorage.setItem('OPERATOR_LOGGED_IN', 'true');
+        } catch (err) {}
+        if (errBox) errBox.classList.add('hidden');
         showDashboard();
       } else {
-        errBox.classList.remove('hidden');
+        if (errBox) {
+          errBox.classList.remove('hidden');
+          const errMsg = document.getElementById('loginErrorMsg');
+          if (errMsg) errMsg.textContent = "Username atau kata sandi tidak valid. Silakan coba kembali.";
+        }
       }
     }
 
     function handleLogout() {
-      sessionStorage.removeItem('OPERATOR_LOGGED_IN');
+      try {
+        sessionStorage.removeItem('OPERATOR_LOGGED_IN');
+      } catch (err) {}
       showLogin();
+      const userInp = document.getElementById('loginUsername');
+      const passInp = document.getElementById('loginPassword');
+      if (userInp) userInp.value = '';
+      if (passInp) passInp.value = '';
     }
 
     function showLogin() {
-      document.getElementById('loginSection').classList.remove('hidden');
-      document.getElementById('dashboardSection').classList.add('hidden');
-      document.getElementById('headerLogoutBtn').classList.add('hidden');
+      const loginSec = document.getElementById('loginSection');
+      const dashSec = document.getElementById('dashboardSection');
+      const logoutBtn = document.getElementById('headerLogoutBtn');
+      if (loginSec) loginSec.classList.remove('hidden');
+      if (dashSec) dashSec.classList.add('hidden');
+      if (logoutBtn) logoutBtn.classList.add('hidden');
     }
 
     function showDashboard() {
-      document.getElementById('loginSection').classList.add('hidden');
-      document.getElementById('dashboardSection').classList.remove('hidden');
-      document.getElementById('headerLogoutBtn').classList.remove('hidden');
-      renderListBerita();
-      updateDashboardStats();
+      try {
+        const loginSec = document.getElementById('loginSection');
+        const dashSec = document.getElementById('dashboardSection');
+        const logoutBtn = document.getElementById('headerLogoutBtn');
+        if (loginSec) loginSec.classList.add('hidden');
+        if (dashSec) dashSec.classList.remove('hidden');
+        if (logoutBtn) logoutBtn.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        renderListBerita();
+        updateDashboardStats();
+      } catch (err) {
+        console.error("Gagal membuka dashboard:", err);
+      }
     }
 
     function switchTab(tab) {
@@ -785,7 +801,7 @@
                   <span class="text-[11px] text-slate-400">&bull; Oleh ${b.penulis}</span>
                 </div>
                 <h4 class="text-sm sm:text-base font-bold text-white leading-snug">${b.judul}</h4>
-                <p class="text-xs text-slate-400 line-clamp-1 mt-1">${b.ringkasan || b.isi.substring(0, 100)}</p>
+                <p class="text-xs text-slate-400 line-clamp-1 mt-1">${b.ringkasan || (b.isi ? b.isi.substring(0, 100) : '')}</p>
               </div>
             </div>
 
