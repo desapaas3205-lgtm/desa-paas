@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,11 +33,12 @@
       }
     }
   </script>
-  <script>
-    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
+    <script>
+    // Tema default: GELAP (Dark Mode)
+    if (localStorage.getItem('theme') === 'light') {
       document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
     }
   </script>
   <link rel="stylesheet" href="assets/css/style.css">
@@ -65,6 +66,12 @@
           <i class="fa-brands fa-whatsapp text-emerald-400"></i>
           <span class="hidden sm:inline">WhatsApp Pelayanan</span>
         </a>
+              <div class="hidden md:flex items-center gap-2.5 border-l border-desa-800 pl-3.5 text-slate-400">
+          <a href="https://www.youtube.com/@pemdespaas" target="_blank" rel="noopener noreferrer" class="hover:text-red-400 transition-colors text-xs" title="YouTube Resmi Desa Paas"><i class="fa-brands fa-youtube"></i></a>
+          <a href="https://www.instagram.com/pemdes.paas/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 transition-colors text-xs" title="Instagram Resmi Desa Paas"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.facebook.com/Pemdes.Paas" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition-colors text-xs" title="Facebook Resmi Desa Paas"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://www.tiktok.com/@pemdespaas" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors text-xs" title="TikTok Resmi Desa Paas"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
       </div>
     </div>
   </div>
@@ -169,6 +176,17 @@
       <a href="potensi.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-seedling w-6 text-desa-600"></i> Potensi Desa & UMKM</a>
       <a href="berita.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-newspaper w-6 text-desa-600"></i> Kabar & Berita Desa</a>
       <a href="kontak.html" class="block px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50"><i class="fa-solid fa-address-book w-6 text-desa-600"></i> Kontak & Pengaduan</a>
+            <!-- Media Sosial di Mobile Drawer -->
+      <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between px-3 py-2">
+        <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Media Sosial Desa</span>
+        <div class="flex items-center gap-3 text-slate-500 dark:text-slate-300">
+          <a href="https://www.youtube.com/@pemdespaas" target="_blank" rel="noopener noreferrer" class="hover:text-red-500 transition-colors text-base" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="https://www.instagram.com/pemdes.paas/" target="_blank" rel="noopener noreferrer" class="hover:text-pink-500 transition-colors text-base" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.facebook.com/Pemdes.Paas" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 transition-colors text-base" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://www.tiktok.com/@pemdespaas" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 dark:hover:text-white transition-colors text-base" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+      </div>
+
       <!-- Tema Switcher di Mobile Drawer -->
       <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between px-3 py-2">
         <span class="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-2">
@@ -402,14 +420,51 @@
 
   </main>
 
-  <!-- FOOTER -->
-  <footer class="bg-slate-900 text-slate-300 pt-12 pb-8 border-t border-slate-800 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-      <p>&copy; 2026 Pemerintah Desa Paas, Pameungpeuk - Garut. All rights reserved.</p>
-      <div class="flex gap-4">
-        <a href="index.html" class="hover:text-white">Beranda</a>
-        <a href="layanan.html" class="hover:text-white">Layanan Surat</a>
-        <a href="kontak.html" class="hover:text-white">Kontak</a>
+    <!-- FOOTER RESMI -->
+  <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col lg:flex-row justify-between items-center gap-6 pb-8 border-b border-slate-800 text-center lg:text-left">
+        <div class="flex items-center gap-3.5">
+          <img src="assets/images/logo-desa.png" alt="Logo Desa Paas" class="h-11 w-auto">
+          <div>
+            <h4 class="text-white font-bold text-base">Pemerintah Desa Paas</h4>
+            <p class="text-xs text-slate-400">Kecamatan Pameungpeuk, Kabupaten Garut, Jawa Barat</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Jalan Raya Pemeungpeuk No.277 Desa Paas 44175</p>
+          </div>
+        </div>
+
+        <!-- Tautan Navigasi Cepat -->
+        <div class="flex flex-wrap gap-4 text-xs font-semibold text-slate-300 justify-center">
+          <a href="index.html" class="hover:text-white transition-colors">Beranda</a>
+          <a href="profil.html" class="hover:text-white transition-colors">Profil</a>
+          <a href="pemerintahan.html" class="hover:text-white transition-colors">Perangkat Desa</a>
+          <a href="layanan.html" class="hover:text-white transition-colors">Layanan Surat</a>
+          <a href="statistik.html" class="hover:text-white transition-colors">Kependudukan</a>
+          <a href="potensi.html" class="hover:text-white transition-colors">Potensi UMKM</a>
+          <a href="berita.html" class="hover:text-white transition-colors">Berita</a>
+          <a href="kontak.html" class="hover:text-white transition-colors">Kontak</a>
+        </div>
+
+        <!-- Media Sosial Resmi Desa Paas -->
+        <div class="flex items-center gap-2.5">
+          <a href="https://www.youtube.com/@pemdespaas" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white flex items-center justify-center transition-all shadow-sm" title="YouTube Resmi Desa Paas">
+            <i class="fa-brands fa-youtube text-sm"></i>
+          </a>
+          <a href="https://www.instagram.com/pemdes.paas/" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-pink-600 text-slate-300 hover:text-white flex items-center justify-center transition-all shadow-sm" title="Instagram Resmi Desa Paas">
+            <i class="fa-brands fa-instagram text-sm"></i>
+          </a>
+          <a href="https://www.facebook.com/Pemdes.Paas" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-blue-600 text-slate-300 hover:text-white flex items-center justify-center transition-all shadow-sm" title="Facebook Resmi Desa Paas">
+            <i class="fa-brands fa-facebook-f text-xs"></i>
+          </a>
+          <a href="https://www.tiktok.com/@pemdespaas" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-black text-slate-300 hover:text-white flex items-center justify-center transition-all shadow-sm border border-slate-700/60" title="TikTok Resmi Desa Paas">
+            <i class="fa-brands fa-tiktok text-xs"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-3 text-center sm:text-left">
+        <p>&copy; 2026 Pemerintah Desa Paas, Pameungpeuk - Garut. Hak Cipta Dilindungi.</p>
+        <p>Portal Resmi Pelayanan & Keterbukaan Informasi Publik</p>
       </div>
     </div>
   </footer>

@@ -12,6 +12,12 @@ const DESA_CONFIG = {
   alamatKantor: "Jalan Raya Pemeungpeuk No.277 Desa Paas Kec. Pameungpeuk Kab. Garut",
   whatsappAdmin: "6282123456789", // Ganti dengan nomor WA Pelayanan Desa Paas resmi
   emailDesa: "pemdespaas.garut@gmail.com",
+  sosmed: {
+    tiktok: "https://www.tiktok.com/@pemdespaas",
+    facebook: "https://www.facebook.com/Pemdes.Paas",
+    instagram: "https://www.instagram.com/pemdes.paas/",
+    youtube: "https://www.youtube.com/@pemdespaas"
+  },
   jamBuka: { buka: 7.5, tutup: 15.5 }, // 07:30 - 15:30 WIB
   hariKerja: [1, 2, 3, 4, 5] // 1: Senin s/d 5: Jumat
 };
