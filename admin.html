@@ -208,6 +208,22 @@
             <p class="text-xs text-slate-400 mt-0.5">Isi rincian informasi di bawah ini. Berita akan langsung tampil di beranda dan halaman berita warga.</p>
           </div>
 
+          <!-- Banner Mode Edit (Muncul saat operator mengklik tombol Edit) -->
+          <div id="bannerModeEdit" class="hidden p-4 rounded-2xl bg-amber-950/80 border border-amber-700/80 text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-900/90 text-amber-300 flex items-center justify-center text-lg shrink-0 border border-amber-600">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white">Mode Edit Berita Sedang Aktif</h4>
+                <p class="text-xs text-amber-300/80 mt-0.5">Anda sedang mengedit: <strong id="editJudulPreview" class="text-white"></strong></p>
+              </div>
+            </div>
+            <button type="button" onclick="batalEditBerita()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-600 transition-colors shrink-0">
+              <i class="fa-solid fa-xmark mr-1"></i> Batalkan Edit
+            </button>
+          </div>
+
           <form id="formTambahBerita" onsubmit="handleTambahBeritaSubmit(event)" class="space-y-5">
             
             <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
@@ -289,8 +305,8 @@
               <button type="reset" onclick="resetFormBerita()" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors">
                 Bersihkan Formulir
               </button>
-              <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-desa-600 hover:bg-desa-500 active:scale-95 transition-all shadow-lg shadow-emerald-950 flex items-center gap-2">
-                <i class="fa-solid fa-paper-plane"></i> Terbitkan Berita Sekarang
+              <button type="submit" id="btnSubmitBerita" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-desa-600 hover:bg-desa-500 active:scale-95 transition-all shadow-lg shadow-emerald-950 flex items-center gap-2">
+                <span id="btnSubmitIcon"><i class="fa-solid fa-paper-plane"></i></span> <span id="btnSubmitText">Terbitkan Berita Sekarang</span>
               </button>
             </div>
           </form>
@@ -334,7 +350,7 @@
       <div class="w-16 h-16 rounded-full bg-emerald-950 border-2 border-emerald-500 text-emerald-400 flex items-center justify-center mx-auto mb-4 text-3xl shadow">
         <i class="fa-solid fa-check"></i>
       </div>
-      <h3 class="text-xl font-extrabold text-white">Berita Berhasil Diterbitkan!</h3>
+      <h3 id="modalSuksesStatus" class="text-xl font-extrabold text-white">Berita Berhasil Diterbitkan!</h3>
       <p id="modalSuksesJudul" class="text-sm text-slate-300 mt-2 font-medium">Judul Berita</p>
       <p class="text-xs text-slate-400 mt-1">Berita sudah tayang secara langsung di website Desa Paas.</p>
 
@@ -401,6 +417,9 @@
     var SUPABASE_CONFIG = window.SUPABASE_CONFIG;
 
     var tempBase64Foto = "";
+    var itemToDeleteId = null;
+    var newlyPublishedBerita = null;
+    var editingBeritaId = null; // Menyimpan ID berita saat dalam mode edit
     var itemToDeleteId = null;
     var newlyPublishedBerita = null;
 
@@ -535,7 +554,48 @@
       }
     }
 
-    // 5. Simpan Berita Baru ke Supabase Cloud
+    // 5. Simpan & Edit Berita di Supabase Cloud
+    async function updateBerita(id, data) {
+      var payload = {
+        judul: data.judul,
+        kategori: data.kategori,
+        penulis: data.penulis,
+        tanggal: data.tanggal,
+        ringkasan: data.ringkasan,
+        isi: data.isi,
+        gambar: data.gambar || '',
+        badge_color: data.badge_color || 'bg-emerald-100 text-emerald-800'
+      };
+
+      var res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/berita?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_CONFIG.key,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        var errText = await res.text();
+        throw new Error(`Gagal memperbarui di Cloud (Status ${res.status}): ${errText}`);
+      }
+
+      // Update cache lokal
+      var customBerita = getSemuaBeritaLokal();
+      for (var i = 0; i < customBerita.length; i++) {
+        if (String(customBerita[i].id) === String(id)) {
+          customBerita[i] = Object.assign({}, customBerita[i], payload, { badgeColor: payload.badge_color });
+          break;
+        }
+      }
+      localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(customBerita));
+
+      return Object.assign({ id: id }, payload, { badgeColor: payload.badge_color });
+    }
+
+    // Simpan Berita Baru ke Supabase Cloud
     async function simpanBeritaBaru(data) {
       var itemBaru = {
         id: 'paas_' + Date.now(),
@@ -693,10 +753,10 @@
       }
     }
 
-    // 10. Submit Berita Baru ke Supabase Cloud
+    // 10. Submit Berita Baru / Update Edit ke Supabase Cloud
     async function handleTambahBeritaSubmit(e) {
       if (e) e.preventDefault();
-      var submitBtn = document.querySelector('#formTambahBerita button[type="submit"]');
+      var submitBtn = document.getElementById('btnSubmitBerita') || document.querySelector('#formTambahBerita button[type="submit"]');
       var originalHTML = submitBtn ? submitBtn.innerHTML : '';
 
       try {
@@ -717,37 +777,125 @@
           submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan ke Cloud...';
         }
 
-        var itemBaru = await simpanBeritaBaru({
-          judul: judul,
-          kategori: kategori,
-          penulis: penulis || 'Pemerintah Desa Paas',
-          tanggal: tanggal || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-          ringkasan: ringkasan || (isi ? isi.substring(0, 140) + '...' : ''),
-          isi: isi,
-          gambar: tempBase64Foto
-        });
+        var itemResult = null;
+        var modalTitleEl = document.getElementById('modalSuksesStatus');
 
-        newlyPublishedBerita = itemBaru;
+        if (editingBeritaId) {
+          // MODE EDIT: Perbarui berita yang ada
+          itemResult = await updateBerita(editingBeritaId, {
+            judul: judul,
+            kategori: kategori,
+            penulis: penulis || 'Pemerintah Desa Paas',
+            tanggal: tanggal || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+            ringkasan: ringkasan || (isi ? isi.substring(0, 140) + '...' : ''),
+            isi: isi,
+            gambar: tempBase64Foto
+          });
+          if (modalTitleEl) modalTitleEl.textContent = "Perubahan Berita Berhasil Disimpan!";
+          batalEditBerita();
+        } else {
+          // MODE TERBIT BARU: Tambah artikel baru
+          itemResult = await simpanBeritaBaru({
+            judul: judul,
+            kategori: kategori,
+            penulis: penulis || 'Pemerintah Desa Paas',
+            tanggal: tanggal || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+            ringkasan: ringkasan || (isi ? isi.substring(0, 140) + '...' : ''),
+            isi: isi,
+            gambar: tempBase64Foto
+          });
+          if (modalTitleEl) modalTitleEl.textContent = "Berita Berhasil Diterbitkan!";
+          document.getElementById('formTambahBerita').reset();
+          resetFormBerita();
+        }
 
-        // Reset form
-        document.getElementById('formTambahBerita').reset();
-        resetFormBerita();
+        newlyPublishedBerita = itemResult;
 
         // Buka modal sukses & share
-        document.getElementById('modalSuksesJudul').textContent = itemBaru.judul;
+        document.getElementById('modalSuksesJudul').textContent = itemResult.judul;
         document.getElementById('modalSuksesTerbit').classList.remove('hidden');
 
         // Refresh daftar berita di operator seketika
         await renderListBerita();
         updateDashboardStats();
       } catch (err) {
-        console.error("Kesalahan saat menerbitkan berita:", err);
-        alert("Terjadi kendala saat menerbitkan berita: " + err.message);
+        console.error("Kesalahan saat menyimpan berita:", err);
+        alert("Terjadi kendala saat menyimpan berita: " + err.message);
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalHTML;
         }
+      }
+    }
+
+    // Fungsi Mengaktifkan Mode Edit untuk Artikel Tertentu
+    function mulaiEditBerita(id) {
+      var b = getBeritaById(id);
+      if (!b) {
+        alert("Data berita tidak ditemukan.");
+        return;
+      }
+
+      editingBeritaId = id;
+
+      // Pindah ke tab form
+      switchTab('form');
+
+      // Tampilkan banner mode edit
+      var banner = document.getElementById('bannerModeEdit');
+      var judulPreview = document.getElementById('editJudulPreview');
+      if (banner) banner.classList.remove('hidden');
+      if (judulPreview) judulPreview.textContent = b.judul;
+
+      // Isi nilai-nilai form dengan data artikel yang dipilih
+      document.getElementById('beritaJudul').value = b.judul || '';
+      document.getElementById('beritaKategori').value = b.kategori || 'Pemerintahan';
+      document.getElementById('beritaPenulis').value = b.penulis || 'Pemerintah Desa Paas';
+      document.getElementById('beritaTanggal').value = b.tanggal || '';
+      document.getElementById('beritaRingkasan').value = b.ringkasan || '';
+      document.getElementById('beritaIsi').value = b.isi || '';
+
+      // Tampilkan foto jika ada
+      if (b.gambar) {
+        tempBase64Foto = b.gambar;
+        document.getElementById('previewImg').src = b.gambar;
+        document.getElementById('dropzonePrompt').classList.add('hidden');
+        document.getElementById('dropzonePreview').classList.remove('hidden');
+      } else {
+        hapusFotoPreview();
+      }
+
+      // Ubah teks tombol submit
+      var btn = document.getElementById('btnSubmitBerita');
+      var icon = document.getElementById('btnSubmitIcon');
+      var text = document.getElementById('btnSubmitText');
+      if (btn && text && icon) {
+        btn.className = "px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-amber-600 hover:bg-amber-500 active:scale-95 transition-all shadow-lg shadow-amber-950 flex items-center gap-2";
+        icon.innerHTML = '<i class="fa-solid fa-floppy-disk"></i>';
+        text.textContent = "Simpan Perubahan Berita";
+      }
+
+      window.scrollTo({ top: 150, behavior: 'smooth' });
+    }
+
+    // Fungsi Membatalkan Mode Edit
+    function batalEditBerita() {
+      editingBeritaId = null;
+      var banner = document.getElementById('bannerModeEdit');
+      if (banner) banner.classList.add('hidden');
+
+      var form = document.getElementById('formTambahBerita');
+      if (form) form.reset();
+      resetFormBerita();
+
+      var btn = document.getElementById('btnSubmitBerita');
+      var icon = document.getElementById('btnSubmitIcon');
+      var text = document.getElementById('btnSubmitText');
+      if (btn && text && icon) {
+        btn.className = "px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-desa-600 hover:bg-desa-500 active:scale-95 transition-all shadow-lg shadow-emerald-950 flex items-center gap-2";
+        icon.innerHTML = '<i class="fa-solid fa-paper-plane"></i>';
+        text.textContent = "Terbitkan Berita Sekarang";
       }
     }
 
@@ -824,8 +972,11 @@
                 </div>
               </div>
 
-              <!-- Tombol Aksi Hapus & Bagikan -->
+              <!-- Tombol Aksi Edit, Bagikan & Hapus -->
               <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                <button type="button" onclick="mulaiEditBerita('${b.id}')" class="px-3 py-1.5 rounded-xl bg-amber-950/80 hover:bg-amber-900 text-amber-200 text-xs font-bold flex items-center gap-1.5 transition-colors border border-amber-800" title="Edit Artikel Ini">
+                  <i class="fa-solid fa-pen-to-square"></i> <span class="hidden sm:inline">Edit</span>
+                </button>
                 <button type="button" onclick="shareSpesifikBerita('${b.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-700" title="Bagikan Berita">
                   <i class="fa-solid fa-share-nodes text-emerald-400"></i> <span class="hidden sm:inline">Bagikan</span>
                 </button>
