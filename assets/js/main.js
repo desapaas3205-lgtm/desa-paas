@@ -177,94 +177,62 @@ _Dikirim via Portal Website Desa Paas (Garut)_`;
   window.open(waUrl, '_blank');
 }
 
-// 6. Manajemen Berita Dinamis, Modal & Berbagi ke Media Sosial (Bersih Tanpa Berita Contoh)
-const DEFAULT_BERITA = {};
+// 6. Manajemen Berita Dinamis, Modal & Berbagi ke Media Sosial (Terintegrasi Cloud Supabase)
+const SUPABASE_CONFIG = {
+  url: 'https://uibidfauocfrjneoexzi.supabase.co',
+  key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpYmlkZmF1b2NmcmpuZW9leHppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MzQ2NDQsImV4cCI6MjEwODIxMDY0NH0.fnmwxVzCZ30mweqpa0gLL0Fbn9QaQFWeQkIIgB137To'
+};
 
-// Ambil seluruh data berita aktif (Hanya berita nyata yang dimasukkan operator)
-function getSemuaBerita() {
+// Data lokal sementara untuk fallback cepat
+function getSemuaBeritaLokal() {
   try {
-    const deletedIds = JSON.parse(localStorage.getItem('DESA_DELETED_BERITA') || '[]');
-    let customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
-
-    // Singkirkan data contoh dummy lama (id 1, 2, 3, 4) jika masih tersimpan di browser
-    const cleanedBerita = customBerita.filter(b => !['1', '2', '3', '4'].includes(String(b.id)));
-    if (cleanedBerita.length !== customBerita.length) {
-      localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(cleanedBerita));
-      customBerita = cleanedBerita;
-    }
-
-    // Filter berita yang sudah dihapus oleh operator
-    return customBerita.filter(b => !deletedIds.includes(String(b.id)));
+    const customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
+    return customBerita.filter(b => !['1', '2', '3', '4'].includes(String(b.id)));
   } catch (e) {
-    console.error("Gagal membaca memori berita:", e);
     return [];
   }
+}
+
+// Ambil seluruh data berita dari Cloud Supabase
+async function fetchBeritaFromSupabase() {
+  try {
+    const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/berita?select=*&order=created_at.desc`, {
+      headers: {
+        'apikey': SUPABASE_CONFIG.key,
+        'Authorization': `Bearer ${SUPABASE_CONFIG.key}`
+      }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    
+    const normalized = data.map(b => ({
+      id: b.id,
+      kategori: b.kategori || 'Pemerintahan',
+      judul: b.judul,
+      tanggal: b.tanggal,
+      penulis: b.penulis,
+      ringkasan: b.ringkasan || (b.isi ? b.isi.substring(0, 140) + '...' : ''),
+      isi: b.isi,
+      gambar: b.gambar || '',
+      badgeColor: b.badge_color || 'bg-emerald-100 text-emerald-800'
+    }));
+
+    // Simpan ke local cache agar saat dibuka berikutnya langsung tampil instan
+    localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(normalized));
+    return normalized;
+  } catch (err) {
+    console.warn("Gagal memuat dari Supabase, menggunakan data lokal:", err);
+    return getSemuaBeritaLokal();
+  }
+}
+
+function getSemuaBerita() {
+  return getSemuaBeritaLokal();
 }
 
 function getBeritaById(id) {
   const all = getSemuaBerita();
   return all.find(b => String(b.id) === String(id));
-}
-
-// Tambah berita baru dari operator
-function simpanBeritaBaru(data) {
-  let customBerita = [];
-  try {
-    customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
-  } catch (e) {
-    customBerita = [];
-  }
-
-  // Hapus contoh dummy lama jika ada
-  customBerita = customBerita.filter(b => !['1', '2', '3', '4'].includes(String(b.id)));
-
-  const itemBaru = {
-    id: 'paas_' + Date.now(),
-    kategori: data.kategori || 'Pemerintahan',
-    judul: data.judul,
-    tanggal: data.tanggal || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-    penulis: data.penulis || 'Pemerintah Desa Paas',
-    ringkasan: data.ringkasan || (data.isi.substring(0, 140) + '...'),
-    isi: data.isi,
-    gambar: data.gambar || '',
-    badgeColor: 'bg-emerald-100 text-emerald-800'
-  };
-
-  customBerita.unshift(itemBaru);
-
-  try {
-    localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(customBerita));
-  } catch (err) {
-    console.warn("Kapasitas penyimpanan browser hampir penuh, mengompresi foto...", err);
-    try {
-      // Jika penyimpanan browser penuh karena foto resolusi tinggi, simpan dengan foto dikosongkan agar teks artikel tidak hilang
-      itemBaru.gambar = '';
-      customBerita[0] = itemBaru;
-      localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(customBerita));
-      alert("Catatan: Foto terlalu besar untuk memori lokal browser. Teks berita berhasil disimpan!");
-    } catch (err2) {
-      alert("Gagal menyimpan berita: " + err2.message);
-      return null;
-    }
-  }
-
-  return itemBaru;
-}
-
-// Hapus berita oleh operator
-function hapusBeritaById(id) {
-  try {
-    const deletedIds = JSON.parse(localStorage.getItem('DESA_DELETED_BERITA') || '[]');
-    if (!deletedIds.includes(String(id))) {
-      deletedIds.push(String(id));
-      localStorage.setItem('DESA_DELETED_BERITA', JSON.stringify(deletedIds));
-    }
-    let customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
-    customBerita = customBerita.filter(b => String(b.id) !== String(id));
-    localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(customBerita));
-  } catch (e) {
-    console.error("Gagal menghapus berita:", e);
-  }
 }
 
 // Variabel berita aktif di modal pembaca
@@ -342,153 +310,167 @@ function shareBerita(platform) {
 }
 
 // Render Dinamis Berita di Beranda & Halaman Berita
-function renderBeritaDynamic() {
+async function renderBeritaDynamic() {
   const indexGrid = document.getElementById('beritaGridIndex');
   const pageGrid = document.getElementById('beritaGridPage');
   const featuredBox = document.getElementById('beritaFeaturedContainer');
 
-  const list = getSemuaBerita();
+  if (!indexGrid && !pageGrid) return;
 
-  // 1. Render Beranda (index.html)
-  if (indexGrid) {
-    if (list.length === 0) {
-      indexGrid.innerHTML = `
-        <div class="col-span-full py-12 px-4 text-center rounded-3xl bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
-          <div class="w-14 h-14 rounded-2xl bg-emerald-950/40 text-emerald-400 flex items-center justify-center mx-auto mb-3 text-2xl border border-emerald-800/60">
-            <i class="fa-regular fa-newspaper"></i>
-          </div>
-          <h4 class="text-base font-bold text-slate-800 dark:text-white">Belum Ada Berita yang Diterbitkan</h4>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
-            Seluruh contoh berita lama telah dibersihkan. Publikasi berita resmi terbaru yang dimasukkan operator akan otomatis muncul di sini.
-          </p>
-          <a href="admin.html" class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-desa-600 hover:bg-desa-500 text-white text-xs font-bold transition-colors">
-            <i class="fa-solid fa-pen-to-square"></i> Tulis Berita Pertama di Portal Operator
-          </a>
-        </div>
-      `;
-    } else {
-      const items = list.slice(0, 4);
-      indexGrid.innerHTML = items.map(b => `
-        <article class="bento-card p-5 flex flex-col justify-between group">
-          <div>
-            ${b.gambar ? `
-              <div class="h-36 rounded-xl overflow-hidden mb-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <img src="${b.gambar}" alt="${b.judul}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-              </div>
-            ` : ''}
-            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold ${b.badgeColor || 'bg-emerald-100 text-emerald-800'} mb-2.5">${b.kategori}</span>
-            <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-2 leading-snug hover:text-desa-600 dark:hover:text-emerald-400 cursor-pointer" onclick="bukaModalBerita('${b.id}')">
-              ${b.judul}
-            </h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed">
-              ${b.ringkasan || (b.isi.substring(0, 120) + '...')}
+  function renderHTMLCards(itemsList) {
+    // 1. Render Beranda (index.html)
+    if (indexGrid) {
+      if (itemsList.length === 0) {
+        indexGrid.innerHTML = `
+          <div class="col-span-full py-12 px-4 text-center rounded-3xl bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-950/40 text-emerald-400 flex items-center justify-center mx-auto mb-3 text-2xl border border-emerald-800/60">
+              <i class="fa-regular fa-newspaper"></i>
+            </div>
+            <h4 class="text-base font-bold text-slate-800 dark:text-white">Belum Ada Berita yang Diterbitkan</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+              Seluruh contoh berita lama telah dibersihkan. Publikasi berita resmi terbaru yang dimasukkan operator akan otomatis muncul di sini.
             </p>
+            <a href="admin.html" class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-desa-600 hover:bg-desa-500 text-white text-xs font-bold transition-colors">
+              <i class="fa-solid fa-pen-to-square"></i> Tulis Berita Pertama di Portal Operator
+            </a>
           </div>
-          <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-            <span class="text-slate-400 dark:text-slate-500">${b.tanggal}</span>
-            <button onclick="bukaModalBerita('${b.id}')" class="font-bold text-desa-700 dark:text-emerald-400 hover:text-desa-900 dark:hover:text-emerald-300">
-              Baca <i class="fa-solid fa-arrow-right text-[10px]"></i>
-            </button>
+        `;
+      } else {
+        const items = itemsList.slice(0, 4);
+        indexGrid.innerHTML = items.map(b => `
+          <article class="bento-card p-5 flex flex-col justify-between group">
+            <div>
+              ${b.gambar ? `
+                <div class="h-36 rounded-xl overflow-hidden mb-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                  <img src="${b.gambar}" alt="${b.judul}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                </div>
+              ` : ''}
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold ${b.badgeColor || 'bg-emerald-100 text-emerald-800'} mb-2.5">${b.kategori}</span>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-2 leading-snug hover:text-desa-600 dark:hover:text-emerald-400 cursor-pointer" onclick="bukaModalBerita('${b.id}')">
+                ${b.judul}
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed">
+                ${b.ringkasan || (b.isi.substring(0, 120) + '...')}
+              </p>
+            </div>
+            <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+              <span class="text-slate-400 dark:text-slate-500">${b.tanggal}</span>
+              <button onclick="bukaModalBerita('${b.id}')" class="font-bold text-desa-700 dark:text-emerald-400 hover:text-desa-900 dark:hover:text-emerald-300">
+                Baca <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              </button>
+            </div>
+          </article>
+        `).join('');
+      }
+    }
+
+    // 2. Render Halaman Berita (berita.html)
+    if (pageGrid) {
+      if (itemsList.length === 0) {
+        if (featuredBox) featuredBox.classList.add('hidden');
+        pageGrid.innerHTML = `
+          <div class="col-span-full py-16 px-4 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="w-16 h-16 rounded-2xl bg-emerald-950/40 text-emerald-400 flex items-center justify-center mx-auto mb-3 text-3xl border border-emerald-800/60">
+              <i class="fa-regular fa-newspaper"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white">Belum Ada Publikasi Berita</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+              Seluruh contoh berita sebelumnya telah dibersihkan. Silakan masuk ke Portal Operator untuk mempublikasikan artikel dan dokumentasi kegiatan Desa Paas.
+            </p>
+            <a href="admin.html" class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-desa-600 hover:bg-desa-500 text-white text-xs font-bold transition-colors shadow">
+              <i class="fa-solid fa-pen-to-square"></i> Tulis Berita Pertama di Portal Operator
+            </a>
           </div>
-        </article>
-      `).join('');
+        `;
+      } else {
+        const featured = itemsList[0];
+        const rest = itemsList.slice(1);
+
+        if (featuredBox) {
+          featuredBox.classList.remove('hidden');
+          featuredBox.innerHTML = `
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div class="lg:col-span-7 space-y-4">
+                <div class="flex items-center gap-2">
+                  <span class="px-3 py-1 rounded-full text-xs font-bold ${featured.badgeColor || 'bg-emerald-100 text-emerald-800'}">${featured.kategori}</span>
+                  <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> ${featured.tanggal}</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-tight hover:text-desa-700 dark:hover:text-emerald-400 cursor-pointer" onclick="bukaModalBerita('${featured.id}')">
+                  ${featured.judul}
+                </h2>
+                <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+                  ${featured.ringkasan || (featured.isi.substring(0, 200) + '...')}
+                </p>
+                <div class="pt-2">
+                  <button onclick="bukaModalBerita('${featured.id}')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-desa-700 hover:bg-desa-800 text-white text-sm font-bold transition-all shadow-sm">
+                    Baca Berita Lengkap <i class="fa-solid fa-arrow-right text-xs"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="lg:col-span-5">
+                ${featured.gambar ? `
+                  <div class="h-64 sm:h-72 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <img src="${featured.gambar}" alt="${featured.judul}" class="w-full h-full object-cover">
+                  </div>
+                ` : `
+                  <div class="h-64 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-950/60 dark:to-slate-900 border border-emerald-200 dark:border-emerald-800/50 flex flex-col items-center justify-center p-6 text-center shadow-inner">
+                    <div class="w-16 h-16 rounded-full bg-emerald-700 text-white flex items-center justify-center text-3xl mb-3 shadow">
+                      <i class="fa-solid fa-newspaper"></i>
+                    </div>
+                    <span class="text-xs font-bold uppercase text-emerald-800 dark:text-emerald-300 tracking-wider">${featured.kategori}</span>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs">${featured.penulis}</p>
+                  </div>
+                `}
+              </div>
+            </div>
+          `;
+        }
+
+        pageGrid.innerHTML = rest.map(b => `
+          <article class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between card-hover group">
+            <div>
+              ${b.gambar ? `
+                <div class="h-44 rounded-2xl overflow-hidden mb-4 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                  <img src="${b.gambar}" alt="${b.judul}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                </div>
+              ` : `
+                <div class="h-40 rounded-2xl bg-emerald-50 dark:bg-slate-800/80 flex items-center justify-center text-5xl text-emerald-600 dark:text-emerald-400 mb-5 border border-emerald-100 dark:border-slate-700">
+                  <i class="fa-solid fa-newspaper"></i>
+                </div>
+              `}
+              <div class="flex items-center gap-2 mb-3">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${b.badgeColor || 'bg-emerald-100 text-emerald-800'}">${b.kategori}</span>
+                <span class="text-xs text-slate-400">${b.tanggal}</span>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 leading-snug hover:text-desa-700 dark:hover:text-emerald-400 cursor-pointer" onclick="bukaModalBerita('${b.id}')">
+                ${b.judul}
+              </h3>
+              <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
+                ${b.ringkasan || (b.isi.substring(0, 140) + '...')}
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <span class="text-xs text-slate-400">Oleh ${b.penulis}</span>
+              <button onclick="bukaModalBerita('${b.id}')" class="text-xs font-bold text-desa-700 dark:text-emerald-400 hover:text-desa-900 dark:hover:text-emerald-300">
+                Baca Selengkapnya <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+          </article>
+        `).join('');
+      }
     }
   }
 
-  // 2. Render Halaman Berita (berita.html)
-  if (pageGrid) {
-    if (list.length === 0) {
-      if (featuredBox) featuredBox.classList.add('hidden');
-      pageGrid.innerHTML = `
-        <div class="col-span-full py-16 px-4 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div class="w-16 h-16 rounded-2xl bg-emerald-950/40 text-emerald-400 flex items-center justify-center mx-auto mb-3 text-3xl border border-emerald-800/60">
-            <i class="fa-regular fa-newspaper"></i>
-          </div>
-          <h3 class="text-lg font-bold text-slate-800 dark:text-white">Belum Ada Publikasi Berita</h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
-            Seluruh contoh berita sebelumnya telah dibersihkan. Silakan masuk ke Portal Operator untuk mempublikasikan artikel dan dokumentasi kegiatan Desa Paas.
-          </p>
-          <a href="admin.html" class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-desa-600 hover:bg-desa-500 text-white text-xs font-bold transition-colors shadow">
-            <i class="fa-solid fa-pen-to-square"></i> Tulis Berita Pertama di Portal Operator
-          </a>
-        </div>
-      `;
-    } else {
-      const featured = list[0];
-      const rest = list.slice(1);
+  // 1. Tampilkan data lokal secara instan (agar tidak ada jeda putih)
+  const initialData = getSemuaBeritaLokal();
+  renderHTMLCards(initialData);
 
-      if (featuredBox) {
-        featuredBox.classList.remove('hidden');
-        featuredBox.innerHTML = `
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div class="lg:col-span-7 space-y-4">
-              <div class="flex items-center gap-2">
-                <span class="px-3 py-1 rounded-full text-xs font-bold ${featured.badgeColor || 'bg-emerald-100 text-emerald-800'}">${featured.kategori}</span>
-                <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> ${featured.tanggal}</span>
-              </div>
-              <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-tight hover:text-desa-700 dark:hover:text-emerald-400 cursor-pointer" onclick="bukaModalBerita('${featured.id}')">
-                ${featured.judul}
-              </h2>
-              <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
-                ${featured.ringkasan || (featured.isi.substring(0, 200) + '...')}
-              </p>
-              <div class="pt-2">
-                <button onclick="bukaModalBerita('${featured.id}')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-desa-700 hover:bg-desa-800 text-white text-sm font-bold transition-all shadow-sm">
-                  Baca Berita Lengkap <i class="fa-solid fa-arrow-right text-xs"></i>
-                </button>
-              </div>
-            </div>
-            <div class="lg:col-span-5">
-              ${featured.gambar ? `
-                <div class="h-64 sm:h-72 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm">
-                  <img src="${featured.gambar}" alt="${featured.judul}" class="w-full h-full object-cover">
-                </div>
-              ` : `
-                <div class="h-64 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-50 dark:from-emerald-950/60 dark:to-slate-900 border border-emerald-200 dark:border-emerald-800/50 flex flex-col items-center justify-center p-6 text-center shadow-inner">
-                  <div class="w-16 h-16 rounded-full bg-emerald-700 text-white flex items-center justify-center text-3xl mb-3 shadow">
-                    <i class="fa-solid fa-newspaper"></i>
-                  </div>
-                  <span class="text-xs font-bold uppercase text-emerald-800 dark:text-emerald-300 tracking-wider">${featured.kategori}</span>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs">${featured.penulis}</p>
-                </div>
-              `}
-            </div>
-          </div>
-        `;
-      }
-
-      pageGrid.innerHTML = rest.map(b => `
-        <article class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between card-hover group">
-          <div>
-            ${b.gambar ? `
-              <div class="h-44 rounded-2xl overflow-hidden mb-4 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <img src="${b.gambar}" alt="${b.judul}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-              </div>
-            ` : `
-              <div class="h-40 rounded-2xl bg-emerald-50 dark:bg-slate-800/80 flex items-center justify-center text-5xl text-emerald-600 dark:text-emerald-400 mb-5 border border-emerald-100 dark:border-slate-700">
-                <i class="fa-solid fa-newspaper"></i>
-              </div>
-            `}
-            <div class="flex items-center gap-2 mb-3">
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${b.badgeColor || 'bg-emerald-100 text-emerald-800'}">${b.kategori}</span>
-              <span class="text-xs text-slate-400">${b.tanggal}</span>
-            </div>
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 leading-snug hover:text-desa-700 dark:hover:text-emerald-400 cursor-pointer" onclick="bukaModalBerita('${b.id}')">
-              ${b.judul}
-            </h3>
-            <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
-              ${b.ringkasan || (b.isi.substring(0, 140) + '...')}
-            </p>
-          </div>
-          <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <span class="text-xs text-slate-400">Oleh ${b.penulis}</span>
-            <button onclick="bukaModalBerita('${b.id}')" class="text-xs font-bold text-desa-700 dark:text-emerald-400 hover:text-desa-900 dark:hover:text-emerald-300">
-              Baca Selengkapnya <i class="fa-solid fa-arrow-right ml-1"></i>
-            </button>
-          </div>
-        </article>
-      `).join('');
-    }
+  // 2. Ambil data realtime terbaru dari Supabase Cloud (semua HP akan sinkron)
+  try {
+    const cloudData = await fetchBeritaFromSupabase();
+    renderHTMLCards(cloudData);
+  } catch (e) {
+    console.error("Gagal sinkron berita Supabase:", e);
   }
 }
 
