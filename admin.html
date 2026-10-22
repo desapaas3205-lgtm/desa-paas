@@ -397,8 +397,89 @@
   </div>
 
   <!-- JAVASCRIPT LOGIC ADMIN -->
-  <script src="assets/js/main.js"></script>
+  <script src="assets/js/main.js?v=20261022_01"></script>
   <script>
+    // =======================================================
+    // FUNGSI MANAJEMEN BERITA (MANDIRI / SELF-CONTAINED)
+    // Menjamin fungsi selalu tersedia tanpa kendala cache browser
+    // =======================================================
+    function getSemuaBerita() {
+      try {
+        const deletedIds = JSON.parse(localStorage.getItem('DESA_DELETED_BERITA') || '[]');
+        let customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
+        const cleaned = customBerita.filter(b => !['1', '2', '3', '4'].includes(String(b.id)));
+        if (cleaned.length !== customBerita.length) {
+          localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(cleaned));
+          customBerita = cleaned;
+        }
+        return customBerita.filter(b => !deletedIds.includes(String(b.id)));
+      } catch (e) {
+        console.error('Gagal membaca memori berita:', e);
+        return [];
+      }
+    }
+
+    function getBeritaById(id) {
+      const all = getSemuaBerita();
+      return all.find(b => String(b.id) === String(id));
+    }
+
+    function simpanBeritaBaru(data) {
+      let customBerita = [];
+      try {
+        customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
+      } catch (e) {
+        customBerita = [];
+      }
+      customBerita = customBerita.filter(b => !['1', '2', '3', '4'].includes(String(b.id)));
+
+      const itemBaru = {
+        id: 'paas_' + Date.now(),
+        kategori: data.kategori || 'Pemerintahan',
+        judul: data.judul,
+        tanggal: data.tanggal || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+        penulis: data.penulis || 'Pemerintah Desa Paas',
+        ringkasan: data.ringkasan || (data.isi.substring(0, 140) + '...'),
+        isi: data.isi,
+        gambar: data.gambar || '',
+        badgeColor: 'bg-emerald-100 text-emerald-800'
+      };
+
+      customBerita.unshift(itemBaru);
+
+      try {
+        localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(customBerita));
+      } catch (err) {
+        console.warn('Kapasitas browser penuh, menyimpan teks tanpa foto...', err);
+        try {
+          itemBaru.gambar = '';
+          customBerita[0] = itemBaru;
+          localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(customBerita));
+          alert('Catatan: Ukuran foto melampaui kapasitas memori browser, teks artikel Anda berhasil disimpan!');
+        } catch (err2) {
+          alert('Gagal menyimpan berita: ' + err2.message);
+          return null;
+        }
+      }
+
+      return itemBaru;
+    }
+
+    function hapusBeritaById(id) {
+      try {
+        const deletedIds = JSON.parse(localStorage.getItem('DESA_DELETED_BERITA') || '[]');
+        if (!deletedIds.includes(String(id))) {
+          deletedIds.push(String(id));
+          localStorage.setItem('DESA_DELETED_BERITA', JSON.stringify(deletedIds));
+        }
+        let customBerita = JSON.parse(localStorage.getItem('DESA_CUSTOM_BERITA') || '[]');
+        customBerita = customBerita.filter(b => String(b.id) !== String(id));
+        localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(customBerita));
+      } catch (e) {
+        console.error('Gagal menghapus berita:', e);
+      }
+    }
+
     // Kredensial Default Operator
     const OPERATOR_USER = "operator";
     const OPERATOR_PASS = "desapaas2026";
