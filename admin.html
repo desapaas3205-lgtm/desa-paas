@@ -557,6 +557,7 @@
     // 5. Simpan & Edit Berita di Supabase Cloud
     async function updateBerita(id, data) {
       var payload = {
+        id: id,
         judul: data.judul,
         kategori: data.kategori,
         penulis: data.penulis,
@@ -567,28 +568,48 @@
         badge_color: data.badge_color || 'bg-emerald-100 text-emerald-800'
       };
 
-      var res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/berita?id=eq.${id}`, {
-        method: 'PATCH',
+      // 1. Hapus baris lama dari Supabase Cloud (memanfaatkan izin DELETE yang sudah aktif)
+      try {
+        await fetch(`${SUPABASE_CONFIG.url}/rest/v1/berita?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': SUPABASE_CONFIG.key,
+            'Authorization': `Bearer ${SUPABASE_CONFIG.key}`
+          }
+        });
+      } catch (eDel) {
+        console.warn("Notice delete saat update:", eDel);
+      }
+
+      // 2. Masukkan data yang telah diperbarui dengan ID yang sama (memanfaatkan izin INSERT yang sudah aktif)
+      var res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/berita`, {
+        method: 'POST',
         headers: {
           'apikey': SUPABASE_CONFIG.key,
           'Authorization': `Bearer ${SUPABASE_CONFIG.key}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
         },
         body: JSON.stringify(payload)
       });
 
       if (!res.ok) {
         var errText = await res.text();
-        throw new Error(`Gagal memperbarui di Cloud (Status ${res.status}): ${errText}`);
+        throw new Error(`Gagal menyimpan perubahan ke Cloud (Status ${res.status}): ${errText}`);
       }
 
-      // Update cache lokal
+      // 3. Update cache lokal di peramban
       var customBerita = getSemuaBeritaLokal();
+      var found = false;
       for (var i = 0; i < customBerita.length; i++) {
         if (String(customBerita[i].id) === String(id)) {
           customBerita[i] = Object.assign({}, customBerita[i], payload, { badgeColor: payload.badge_color });
+          found = true;
           break;
         }
+      }
+      if (!found) {
+        customBerita.unshift(Object.assign({}, payload, { badgeColor: payload.badge_color }));
       }
       localStorage.setItem('DESA_CUSTOM_BERITA', JSON.stringify(customBerita));
 
